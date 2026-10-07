@@ -1,0 +1,31 @@
+name: Pinned RHS grounding runtime
+description: Materialize checked Ithon and existing owner control interfaces
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        repository: dilapidated-shed/ithon
+        ref: d6e83969f82512e920fb17b44326cb54f31d015c
+        path: _ithon
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        repository: isomorphisms/catfood
+        ref: 62ac940588f5ee4c5be468d48e38d74514da3757
+        path: _catfood
+        persist-credentials: false
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      with:
+        repository: isomorphisms/flexible-pipes
+        ref: 424e1972da3bab1bc7ec97a6094422fe7bb211f5
+        path: _fp
+        persist-credentials: false
+    - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+      with:
+        repository: dilapidated-shed/grease
+        run-id: 37474007912
+        artifact-ids: 11418397776
+        github-token: ${{ github.token }}
+        path: _runtime
+        merge-multiple: true

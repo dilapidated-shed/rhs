@@ -1,0 +1,8 @@
+facet	prefix	full_word	nonsense	meaning	family
+byte-count	cb	ByteCount	qx	count in bytes	storage
+element-count	ce	ElementCount	qz	count of elements	storage
+index	i	Index	q	zero based linear index	positions
+row	rw	RowNumber	zx	zero based row number	positions
+column	col	ColumnNumber	qzx	zero based column number	positions
+DWORD	dw	Unsigned32BitValue	zq	unsigned value truncated modulo 4294967296	integer-width
+WORD	w	Unsigned16BitValue	z	unsigned value truncated modulo 65536	integer-width

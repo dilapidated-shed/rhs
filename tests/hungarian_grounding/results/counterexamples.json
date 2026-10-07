@@ -1,0 +1,1651 @@
+[
+  {
+    "model": "codeberta",
+    "cases": [
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.029447890715901315,
+          "prediction": "element-count",
+          "scores": {
+            "DWORD": 0.4077471400661905,
+            "WORD": 0.43996929066376805,
+            "byte-count": 0.48107170472299493,
+            "column": 0.4141251738182698,
+            "element-count": 0.5105195954388962,
+            "index": 0.4273724681206971,
+            "row": 0.4457441376668493
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "byte-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "claim": "byte-count",
+          "context": "image",
+          "expected_value": 14,
+          "family": "storage",
+          "form": "abbreviated",
+          "name": "cbRaster",
+          "name_input": "cbRaster",
+          "pair_input": "Name: cbRaster. Computation: element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "partition": "heldout",
+          "stem": "Raster"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.010840208598978496,
+          "prediction": "row",
+          "scores": {
+            "DWORD": 0.3880093137457159,
+            "WORD": 0.47352608283139613,
+            "byte-count": 0.39945986332580163,
+            "column": 0.48378742640080014,
+            "element-count": 0.3691431963993557,
+            "index": 0.5120247782511258,
+            "row": 0.5228649868501043
+          }
+        },
+        "pair": {
+          "margin": 0.02788984580185333,
+          "prediction": "element-count",
+          "scores": {
+            "DWORD": 0.38780184630471,
+            "WORD": 0.41838185276564055,
+            "byte-count": 0.44411113877001274,
+            "column": 0.4404797709956026,
+            "element-count": 0.5074655856687208,
+            "index": 0.4618783656435577,
+            "row": 0.47957573986686747
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.027949886443742133,
+          "prediction": "element-count",
+          "scores": {
+            "DWORD": 0.4183771821955585,
+            "WORD": 0.4765434429371159,
+            "byte-count": 0.495875319318781,
+            "column": 0.41922629627039465,
+            "element-count": 0.5238252057625231,
+            "index": 0.4298494940460718,
+            "row": 0.46407714851002196
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "byte-count",
+          "behavior_input": "element_count = 5; bytes_per_element = 8; return element_count * bytes_per_element; Observed return value: 40.",
+          "claim": "element-count",
+          "context": "audio",
+          "expected_value": 40,
+          "family": "storage",
+          "form": "full-word",
+          "name": "ElementCountSample",
+          "name_input": "ElementCountSample",
+          "pair_input": "Name: ElementCountSample. Computation: element_count = 5; bytes_per_element = 8; return element_count * bytes_per_element; Observed return value: 40.",
+          "partition": "heldout",
+          "stem": "Sample"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.012154797258171923,
+          "prediction": "element-count",
+          "scores": {
+            "DWORD": 0.3084806338620829,
+            "WORD": 0.4967076829394984,
+            "byte-count": 0.5723368138219124,
+            "column": 0.5028985807605382,
+            "element-count": 0.5844916110800843,
+            "index": 0.5452270852893487,
+            "row": 0.5072040746072477
+          }
+        },
+        "pair": {
+          "margin": 0.05295951925075715,
+          "prediction": "element-count",
+          "scores": {
+            "DWORD": 0.3858869114467722,
+            "WORD": 0.4407177205671773,
+            "byte-count": 0.4766597555644896,
+            "column": 0.4260156116160097,
+            "element-count": 0.5296192748152467,
+            "index": 0.4441005009524376,
+            "row": 0.4596665533591843
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.08408395129040724,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.4939838945978997,
+            "WORD": 0.5023106763472285,
+            "byte-count": 0.4072512386809673,
+            "column": 0.5078574707728803,
+            "element-count": 0.41426496744505387,
+            "index": 0.5931257278761205,
+            "row": 0.5090417765857133
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "index",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "claim": "index",
+          "context": "sheet",
+          "expected_value": 23,
+          "family": "positions",
+          "form": "abbreviated",
+          "name": "iCell",
+          "name_input": "iCell",
+          "pair_input": "Name: iCell. Computation: linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.009987062735603347,
+          "prediction": "column",
+          "scores": {
+            "DWORD": 0.3405124271899661,
+            "WORD": 0.48436769181436,
+            "byte-count": 0.4468695908202022,
+            "column": 0.5796263163937192,
+            "element-count": 0.41487782596011574,
+            "index": 0.5234773453069435,
+            "row": 0.5696392536581159
+          }
+        },
+        "pair": {
+          "margin": 0.060876467966923475,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.44111045816869565,
+            "WORD": 0.4460705371922091,
+            "byte-count": 0.3607284883152454,
+            "column": 0.5037943165890051,
+            "element-count": 0.4062412475359973,
+            "index": 0.5699336663063406,
+            "row": 0.5090571983394171
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.07688563459205788,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.43772485416624235,
+            "WORD": 0.44416382626733425,
+            "byte-count": 0.3927197767977199,
+            "column": 0.5204613933463508,
+            "element-count": 0.4352859312591303,
+            "index": 0.5973470279384087,
+            "row": 0.516678388682141
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "row",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index // columns; Observed return value: 3.",
+          "claim": "index",
+          "context": "sheet",
+          "expected_value": 3,
+          "family": "positions",
+          "form": "full-word",
+          "name": "IndexSheet",
+          "name_input": "IndexSheet",
+          "pair_input": "Name: IndexSheet. Computation: linear_index = 23; columns = 7; return linear_index // columns; Observed return value: 3.",
+          "partition": "heldout",
+          "stem": "Sheet"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.024022172840698075,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.3608005321769523,
+            "WORD": 0.49717891795640456,
+            "byte-count": 0.48341093938633317,
+            "column": 0.5112350021789026,
+            "element-count": 0.37430633092642085,
+            "index": 0.5352571750196007,
+            "row": 0.48603914302508916
+          }
+        },
+        "pair": {
+          "margin": 0.0780639889747281,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.4138350686560577,
+            "WORD": 0.4134248471131422,
+            "byte-count": 0.36621948878866134,
+            "column": 0.5051367581598567,
+            "element-count": 0.41811325145417566,
+            "index": 0.5844317397273652,
+            "row": 0.5063677507526371
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.15743679039014002,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.6597051999015822,
+            "WORD": 0.5022684095114421,
+            "byte-count": 0.3625759877227318,
+            "column": 0.43228734790511625,
+            "element-count": 0.3481463782073041,
+            "index": 0.4406365694446547,
+            "row": 0.4580145462883615
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "DWORD",
+          "behavior_input": "input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 131073,
+          "family": "integer-width",
+          "form": "abbreviated",
+          "name": "dwCounter",
+          "name_input": "dwCounter",
+          "pair_input": "Name: dwCounter. Computation: input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.032261655584427396,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.4258400207159642,
+            "WORD": 0.5948125751003075,
+            "byte-count": 0.6283799526582068,
+            "column": 0.5492836795558468,
+            "element-count": 0.5198348795572112,
+            "index": 0.5961182970737794,
+            "row": 0.5747821742517151
+          }
+        },
+        "pair": {
+          "margin": 0.13964873382315818,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.5986308048615813,
+            "WORD": 0.4589820710384231,
+            "byte-count": 0.34655834371598304,
+            "column": 0.4183440488663867,
+            "element-count": 0.366569098007366,
+            "index": 0.44730613808678077,
+            "row": 0.4446396474226483
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.0013315334784557153,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.571342091933483,
+            "WORD": 0.5726736254119387,
+            "byte-count": 0.44269083925559893,
+            "column": 0.5031578490718178,
+            "element-count": 0.436743338424877,
+            "index": 0.48579441644970167,
+            "row": 0.531428609107182
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "WORD",
+          "behavior_input": "input_value = 131073; return input_value % 65536; Observed return value: 1.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 1,
+          "family": "integer-width",
+          "form": "full-word",
+          "name": "Unsigned32BitValueCounter",
+          "name_input": "Unsigned32BitValueCounter",
+          "pair_input": "Name: Unsigned32BitValueCounter. Computation: input_value = 131073; return input_value % 65536; Observed return value: 1.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.05728366414431174,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.5346697075492893,
+            "WORD": 0.6097018291790939,
+            "byte-count": 0.5301692505574852,
+            "column": 0.5524181650347821,
+            "element-count": 0.42695199570801456,
+            "index": 0.5176265124277891,
+            "row": 0.5449096633832133
+          }
+        },
+        "pair": {
+          "margin": 0.009232995436144309,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.5362766652742843,
+            "WORD": 0.52704366983814,
+            "byte-count": 0.41780207048367646,
+            "column": 0.470657018985457,
+            "element-count": 0.4165274520637485,
+            "index": 0.471658425226645,
+            "row": 0.481779254116554
+          }
+        }
+      }
+    ]
+  },
+  {
+    "model": "codebert",
+    "cases": [
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.01406542498231278,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9144738095273993,
+            "WORD": 0.9004083845450865,
+            "byte-count": 0.8104179167684614,
+            "column": 0.8637746672365423,
+            "element-count": 0.8195663747953167,
+            "index": 0.8557659280316515,
+            "row": 0.8542209985674143
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "byte-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "claim": "byte-count",
+          "context": "image",
+          "expected_value": 14,
+          "family": "storage",
+          "form": "abbreviated",
+          "name": "cbRaster",
+          "name_input": "cbRaster",
+          "pair_input": "Name: cbRaster. Computation: element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "partition": "heldout",
+          "stem": "Raster"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.0010738139666764956,
+          "prediction": "row",
+          "scores": {
+            "DWORD": 0.8941419344626789,
+            "WORD": 0.9054449976638326,
+            "byte-count": 0.9260122114887728,
+            "column": 0.9275719199274791,
+            "element-count": 0.9266582611719402,
+            "index": 0.9292549905553135,
+            "row": 0.93032880452199
+          }
+        },
+        "pair": {
+          "margin": 0.012519480019505203,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9424764632843503,
+            "WORD": 0.9299569832648451,
+            "byte-count": 0.8449438640460539,
+            "column": 0.887857062502444,
+            "element-count": 0.8573779128048252,
+            "index": 0.8851855534250489,
+            "row": 0.8815737386113853
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.002426920643608499,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9550761286260256,
+            "WORD": 0.9526492079824171,
+            "byte-count": 0.8955110477750158,
+            "column": 0.9289075587078731,
+            "element-count": 0.9059499940402255,
+            "index": 0.9311307428088442,
+            "row": 0.9252914212545139
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "index",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "claim": "index",
+          "context": "sheet",
+          "expected_value": 23,
+          "family": "positions",
+          "form": "abbreviated",
+          "name": "iCell",
+          "name_input": "iCell",
+          "pair_input": "Name: iCell. Computation: linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.0009028710110455807,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.8493003745430656,
+            "WORD": 0.8671576870862386,
+            "byte-count": 0.9271348706177274,
+            "column": 0.9233473484116991,
+            "element-count": 0.9213041574011969,
+            "index": 0.9262319996066818,
+            "row": 0.9233844967523681
+          }
+        },
+        "pair": {
+          "margin": 0.006497690367897047,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9564070258430784,
+            "WORD": 0.9499093354751813,
+            "byte-count": 0.8823491078641764,
+            "column": 0.9155772918970002,
+            "element-count": 0.8951721817285785,
+            "index": 0.917719997807546,
+            "row": 0.912181416475298
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.008270347257578248,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9726503274101866,
+            "WORD": 0.9643799801526084,
+            "byte-count": 0.8893877840725285,
+            "column": 0.9224995629387177,
+            "element-count": 0.9004404411819135,
+            "index": 0.9216939186951759,
+            "row": 0.9199105275933219
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "DWORD",
+          "behavior_input": "input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 131073,
+          "family": "integer-width",
+          "form": "abbreviated",
+          "name": "dwCounter",
+          "name_input": "dwCounter",
+          "pair_input": "Name: dwCounter. Computation: input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.00004409138017880121,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.897975520227189,
+            "WORD": 0.9086410600873258,
+            "byte-count": 0.9397178615565446,
+            "column": 0.9343338058049692,
+            "element-count": 0.9412856564916395,
+            "index": 0.9413297478718183,
+            "row": 0.9374702455162117
+          }
+        },
+        "pair": {
+          "margin": 0.011449597697630653,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9689911152516043,
+            "WORD": 0.9575415175539737,
+            "byte-count": 0.876632281126616,
+            "column": 0.9104868139213002,
+            "element-count": 0.8890598705392444,
+            "index": 0.9114841523838838,
+            "row": 0.9073253061903782
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.002355262772851918,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9725826773319357,
+            "WORD": 0.9702274145590838,
+            "byte-count": 0.9070941717953029,
+            "column": 0.932555212360918,
+            "element-count": 0.9198131002744753,
+            "index": 0.9333740830858197,
+            "row": 0.9315279316056458
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "WORD",
+          "behavior_input": "input_value = 131073; return input_value % 65536; Observed return value: 1.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 1,
+          "family": "integer-width",
+          "form": "full-word",
+          "name": "Unsigned32BitValueCounter",
+          "name_input": "Unsigned32BitValueCounter",
+          "pair_input": "Name: Unsigned32BitValueCounter. Computation: input_value = 131073; return input_value % 65536; Observed return value: 1.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.0031329490102304236,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9630108464484173,
+            "WORD": 0.9598778974381869,
+            "byte-count": 0.9075894590638607,
+            "column": 0.9365917702422027,
+            "element-count": 0.9202453296563314,
+            "index": 0.9438888058031024,
+            "row": 0.9338491309384809
+          }
+        },
+        "pair": {
+          "margin": 0.007799482611621111,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.9686631054728517,
+            "WORD": 0.9608636228612306,
+            "byte-count": 0.8830250733333175,
+            "column": 0.9157199117102996,
+            "element-count": 0.8966107610961691,
+            "index": 0.9179048815159038,
+            "row": 0.9128929810427289
+          }
+        }
+      }
+    ]
+  },
+  {
+    "model": "minilm",
+    "cases": [
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.14859325348042274,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.27816552163292435,
+            "WORD": 0.26093690059129904,
+            "byte-count": 0.7375199285654457,
+            "column": 0.2580122755803009,
+            "element-count": 0.5889266750850229,
+            "index": 0.15150077131269202,
+            "row": 0.27568458646914556
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "byte-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "claim": "byte-count",
+          "context": "image",
+          "expected_value": 14,
+          "family": "storage",
+          "form": "abbreviated",
+          "name": "cbRaster",
+          "name_input": "cbRaster",
+          "pair_input": "Name: cbRaster. Computation: element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "partition": "heldout",
+          "stem": "Raster"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.006240810222875287,
+          "prediction": "row",
+          "scores": {
+            "DWORD": 0.09472828759234282,
+            "WORD": 0.058192888689968525,
+            "byte-count": 0.025817851784231037,
+            "column": 0.08438457862752011,
+            "element-count": 0.02552326013988188,
+            "index": 0.10016008716474306,
+            "row": 0.10640089738761835
+          }
+        },
+        "pair": {
+          "margin": 0.11912500297367229,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.30070946071959487,
+            "WORD": 0.2522210638496841,
+            "byte-count": 0.5715980562440666,
+            "column": 0.2709229514553239,
+            "element-count": 0.4524730532703943,
+            "index": 0.19879244320570544,
+            "row": 0.28536605713476615
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.08287819794380102,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.2589932064612138,
+            "WORD": 0.24589069584255652,
+            "byte-count": 0.6951692642164917,
+            "column": 0.2620377000496288,
+            "element-count": 0.6122910662726907,
+            "index": 0.16099415892959115,
+            "row": 0.28825835763152907
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "element-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "claim": "byte-count",
+          "context": "image",
+          "expected_value": 7,
+          "family": "storage",
+          "form": "full-word",
+          "name": "ByteCountRaster",
+          "name_input": "ByteCountRaster",
+          "pair_input": "Name: ByteCountRaster. Computation: element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "partition": "heldout",
+          "stem": "Raster"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.33588612835909265,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.2971842975912731,
+            "WORD": 0.23893049222651455,
+            "byte-count": 0.6330704259503658,
+            "column": 0.13925723295047493,
+            "element-count": 0.248524471514879,
+            "index": 0.11827985719302453,
+            "row": 0.16285448738322833
+          }
+        },
+        "pair": {
+          "margin": 0.22256829156891295,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.32757901410843393,
+            "WORD": 0.2731207566371878,
+            "byte-count": 0.671008022694804,
+            "column": 0.20201788217406938,
+            "element-count": 0.44843973112589103,
+            "index": 0.13468712699026741,
+            "row": 0.23426741268131762
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.08598014160096268,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.2273513125921333,
+            "WORD": 0.21373754594223932,
+            "byte-count": 0.14494930080968943,
+            "column": 0.39689329852365124,
+            "element-count": 0.16655737155094366,
+            "index": 0.4828734401246139,
+            "row": 0.35350682433422104
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "index",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "claim": "index",
+          "context": "sheet",
+          "expected_value": 23,
+          "family": "positions",
+          "form": "abbreviated",
+          "name": "iCell",
+          "name_input": "iCell",
+          "pair_input": "Name: iCell. Computation: linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.015998919930579794,
+          "prediction": "element-count",
+          "scores": {
+            "DWORD": 0.0711022998797841,
+            "WORD": 0.06456199049223914,
+            "byte-count": 0.060697116791753686,
+            "column": 0.0005583987442768959,
+            "element-count": 0.0871012198103639,
+            "index": 0.0606808204984126,
+            "row": 0.04755767559661521
+          }
+        },
+        "pair": {
+          "margin": 0.10191917496665892,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.2371757146197903,
+            "WORD": 0.1916627532973037,
+            "byte-count": 0.15502230464558678,
+            "column": 0.340658451286899,
+            "element-count": 0.19146005645154723,
+            "index": 0.4425776262535579,
+            "row": 0.3094217273779509
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.06604109626573601,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.21495901442752205,
+            "WORD": 0.19816339397301633,
+            "byte-count": 0.14374268773660248,
+            "column": 0.4160178732837858,
+            "element-count": 0.16870843281528375,
+            "index": 0.4820589695495218,
+            "row": 0.3635979850208539
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "row",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index // columns; Observed return value: 3.",
+          "claim": "index",
+          "context": "sheet",
+          "expected_value": 3,
+          "family": "positions",
+          "form": "full-word",
+          "name": "IndexCell",
+          "name_input": "IndexCell",
+          "pair_input": "Name: IndexCell. Computation: linear_index = 23; columns = 7; return linear_index // columns; Observed return value: 3.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.22154403524272281,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.06888657180984359,
+            "WORD": 0.061947919727803974,
+            "byte-count": 0.07571721202994862,
+            "column": 0.25501273730186824,
+            "element-count": 0.10318146723750024,
+            "index": 0.4876361256054948,
+            "row": 0.266092090362772
+          }
+        },
+        "pair": {
+          "margin": 0.10064146938805973,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.19949436674526,
+            "WORD": 0.15798333093432754,
+            "byte-count": 0.13214527700160186,
+            "column": 0.3620789683029375,
+            "element-count": 0.14387843829653998,
+            "index": 0.46272043769099724,
+            "row": 0.3423713630264622
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.032605110283898786,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.3777887070715221,
+            "WORD": 0.34518359678762334,
+            "byte-count": 0.217325328446955,
+            "column": 0.2614946181462821,
+            "element-count": 0.12739076835356303,
+            "index": 0.09132331585635552,
+            "row": 0.2482279658345764
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "DWORD",
+          "behavior_input": "input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 131073,
+          "family": "integer-width",
+          "form": "abbreviated",
+          "name": "dwCounter",
+          "name_input": "dwCounter",
+          "pair_input": "Name: dwCounter. Computation: input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.03061025560714796,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.036250614037605315,
+            "WORD": -0.032915643878568275,
+            "byte-count": 0.13519163647193028,
+            "column": 0.006751306261438571,
+            "element-count": 0.10458138086478232,
+            "index": 0.04788951324376566,
+            "row": 0.010558228903634974
+          }
+        },
+        "pair": {
+          "margin": 0.05142474182094278,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.2996196128158516,
+            "WORD": 0.20958573489362778,
+            "byte-count": 0.2481948709949088,
+            "column": 0.20760192520499485,
+            "element-count": 0.13497810481644967,
+            "index": 0.10556701224403266,
+            "row": 0.19820971746652355
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.032605110283898786,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.3777887070715221,
+            "WORD": 0.34518359678762334,
+            "byte-count": 0.217325328446955,
+            "column": 0.2614946181462821,
+            "element-count": 0.12739076835356303,
+            "index": 0.09132331585635552,
+            "row": 0.2482279658345764
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "DWORD",
+          "behavior_input": "input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "claim": "WORD",
+          "context": "counter",
+          "expected_value": 131073,
+          "family": "integer-width",
+          "form": "full-word",
+          "name": "Unsigned16BitValueCounter",
+          "name_input": "Unsigned16BitValueCounter",
+          "pair_input": "Name: Unsigned16BitValueCounter. Computation: input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.04613695567260251,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.4996018051002677,
+            "WORD": 0.4534648494276652,
+            "byte-count": 0.45210074682691037,
+            "column": 0.20558324861678254,
+            "element-count": 0.23219519667374452,
+            "index": 0.15328978920459396,
+            "row": 0.19854923874413033
+          }
+        },
+        "pair": {
+          "margin": 0.07740412356181481,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.534454954484664,
+            "WORD": 0.45705083092284915,
+            "byte-count": 0.3944676172537685,
+            "column": 0.250636243743637,
+            "element-count": 0.2064678395517494,
+            "index": 0.1303221134017101,
+            "row": 0.23796791190198027
+          }
+        }
+      }
+    ]
+  },
+  {
+    "model": "bert-cased",
+    "cases": [
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.01833852289922666,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.777052071038074,
+            "WORD": 0.7953905939373007,
+            "byte-count": 0.7171665722181236,
+            "column": 0.7273423386566031,
+            "element-count": 0.7315397196867182,
+            "index": 0.6621080360574719,
+            "row": 0.7419403759122688
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "element-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "claim": "element-count",
+          "context": "image",
+          "expected_value": 7,
+          "family": "storage",
+          "form": "abbreviated",
+          "name": "ceRaster",
+          "name_input": "ceRaster",
+          "pair_input": "Name: ceRaster. Computation: element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "partition": "heldout",
+          "stem": "Raster"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.009544308362371745,
+          "prediction": "element-count",
+          "scores": {
+            "DWORD": 0.6653912009765245,
+            "WORD": 0.7224745311154009,
+            "byte-count": 0.7694117712073797,
+            "column": 0.7665947196133449,
+            "element-count": 0.784210871135393,
+            "index": 0.7746665627730213,
+            "row": 0.7555679059930942
+          }
+        },
+        "pair": {
+          "margin": 0.01702629770884556,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.7952298607170067,
+            "WORD": 0.8122561584258523,
+            "byte-count": 0.7110459407724647,
+            "column": 0.7251483523615421,
+            "element-count": 0.7220750680461903,
+            "index": 0.6769384254423749,
+            "row": 0.7331896395191378
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.01833852289922666,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.777052071038074,
+            "WORD": 0.7953905939373007,
+            "byte-count": 0.7171665722181236,
+            "column": 0.7273423386566031,
+            "element-count": 0.7315397196867182,
+            "index": 0.6621080360574719,
+            "row": 0.7419403759122688
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "element-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "claim": "byte-count",
+          "context": "image",
+          "expected_value": 7,
+          "family": "storage",
+          "form": "abbreviated",
+          "name": "cbRaster",
+          "name_input": "cbRaster",
+          "pair_input": "Name: cbRaster. Computation: element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "partition": "heldout",
+          "stem": "Raster"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.0006509840191033511,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.6830339719534683,
+            "WORD": 0.7496028843869529,
+            "byte-count": 0.7149126723663235,
+            "column": 0.7449604540344842,
+            "element-count": 0.7363849859657481,
+            "index": 0.7489519003678495,
+            "row": 0.7399507780732789
+          }
+        },
+        "pair": {
+          "margin": 0.018281816304147047,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.7953863631866286,
+            "WORD": 0.8136681794907756,
+            "byte-count": 0.706495051754131,
+            "column": 0.7218647820972007,
+            "element-count": 0.7185295864776542,
+            "index": 0.6721148830459642,
+            "row": 0.7307863194139478
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.024437224103294963,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.7911183132162121,
+            "WORD": 0.815555537319507,
+            "byte-count": 0.7387475029014604,
+            "column": 0.7701589866708359,
+            "element-count": 0.7413006349214644,
+            "index": 0.7230562468438028,
+            "row": 0.7750353360444132
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "index",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "claim": "index",
+          "context": "sheet",
+          "expected_value": 23,
+          "family": "positions",
+          "form": "abbreviated",
+          "name": "iCell",
+          "name_input": "iCell",
+          "pair_input": "Name: iCell. Computation: linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.00012821527422657297,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.6036898044074968,
+            "WORD": 0.6482767042499751,
+            "byte-count": 0.7389775967303138,
+            "column": 0.7312937866790693,
+            "element-count": 0.7175065411439189,
+            "index": 0.7391058120045404,
+            "row": 0.719030968620225
+          }
+        },
+        "pair": {
+          "margin": 0.02011839488735423,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.8061411248933485,
+            "WORD": 0.8262595197807028,
+            "byte-count": 0.7210646709128404,
+            "column": 0.7522359355668521,
+            "element-count": 0.7213824748430632,
+            "index": 0.719150837460616,
+            "row": 0.7528770096553312
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.024437224103294963,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.7911183132162121,
+            "WORD": 0.815555537319507,
+            "byte-count": 0.7387475029014604,
+            "column": 0.7701589866708359,
+            "element-count": 0.7413006349214644,
+            "index": 0.7230562468438028,
+            "row": 0.7750353360444132
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "index",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "claim": "row",
+          "context": "sheet",
+          "expected_value": 23,
+          "family": "positions",
+          "form": "full-word",
+          "name": "RowNumberCell",
+          "name_input": "RowNumberCell",
+          "pair_input": "Name: RowNumberCell. Computation: linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.0161573449758603,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.6816811263537749,
+            "WORD": 0.7145014819500846,
+            "byte-count": 0.6936877751064496,
+            "column": 0.6945098113765318,
+            "element-count": 0.6593694570313673,
+            "index": 0.6983441369742243,
+            "row": 0.675723510266557
+          }
+        },
+        "pair": {
+          "margin": 0.01816933246163721,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.8091967470683271,
+            "WORD": 0.8273660795299643,
+            "byte-count": 0.7175478159828557,
+            "column": 0.7455878688516712,
+            "element-count": 0.711594965461173,
+            "index": 0.7129442994430875,
+            "row": 0.7447866397465255
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.07383736947101094,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.8866639512240644,
+            "WORD": 0.8128265817530534,
+            "byte-count": 0.6587260370786759,
+            "column": 0.6683746197051964,
+            "element-count": 0.6442320555716117,
+            "index": 0.6053845534102086,
+            "row": 0.674081033917335
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "DWORD",
+          "behavior_input": "input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 131073,
+          "family": "integer-width",
+          "form": "abbreviated",
+          "name": "dwCounter",
+          "name_input": "dwCounter",
+          "pair_input": "Name: dwCounter. Computation: input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.04045434970823203,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.66900886148236,
+            "WORD": 0.7060516889001438,
+            "byte-count": 0.6894191245426924,
+            "column": 0.7064570258071681,
+            "element-count": 0.6931297146849098,
+            "index": 0.7469113755154001,
+            "row": 0.6945170837527501
+          }
+        },
+        "pair": {
+          "margin": 0.05371610033311547,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.8755161746692447,
+            "WORD": 0.8218000743361292,
+            "byte-count": 0.6597702542012894,
+            "column": 0.676829210290259,
+            "element-count": 0.652109930953267,
+            "index": 0.6242510847154024,
+            "row": 0.6792512379810856
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.000148600625692219,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.8460395083922424,
+            "WORD": 0.8461881090179346,
+            "byte-count": 0.7106873775572098,
+            "column": 0.7336182412963299,
+            "element-count": 0.7086054143004201,
+            "index": 0.6717045015171459,
+            "row": 0.7401857082785334
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "WORD",
+          "behavior_input": "input_value = 131073; return input_value % 65536; Observed return value: 1.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 1,
+          "family": "integer-width",
+          "form": "full-word",
+          "name": "Unsigned32BitValueCounter",
+          "name_input": "Unsigned32BitValueCounter",
+          "pair_input": "Name: Unsigned32BitValueCounter. Computation: input_value = 131073; return input_value % 65536; Observed return value: 1.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.026597642811968414,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.7857289042905636,
+            "WORD": 0.812326547102532,
+            "byte-count": 0.7002710957328959,
+            "column": 0.7324312541626006,
+            "element-count": 0.6864997634302762,
+            "index": 0.7532445832968158,
+            "row": 0.7231200562080422
+          }
+        },
+        "pair": {
+          "margin": 0.0023929446879819016,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.8443855648312597,
+            "WORD": 0.8467785095192416,
+            "byte-count": 0.6898206457113294,
+            "column": 0.7135766749140534,
+            "element-count": 0.6822927558549432,
+            "index": 0.6685561129613882,
+            "row": 0.715836901273217
+          }
+        }
+      }
+    ]
+  },
+  {
+    "model": "bert-uncased",
+    "cases": [
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.03768166345906099,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.6592848605836168,
+            "WORD": 0.7036653063248984,
+            "byte-count": 0.6659836428658374,
+            "column": 0.4656768426167057,
+            "element-count": 0.5317789262186016,
+            "index": 0.5600176501709099,
+            "row": 0.6050358499355034
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "byte-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "claim": "byte-count",
+          "context": "image",
+          "expected_value": 14,
+          "family": "storage",
+          "form": "abbreviated",
+          "name": "cbRaster",
+          "name_input": "cbRaster",
+          "pair_input": "Name: cbRaster. Computation: element_count = 7; bytes_per_element = 2; return element_count * bytes_per_element; Observed return value: 14.",
+          "partition": "heldout",
+          "stem": "Raster"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.016744283072784527,
+          "prediction": "index",
+          "scores": {
+            "DWORD": 0.4665490293226316,
+            "WORD": 0.501807815307645,
+            "byte-count": 0.553567157827917,
+            "column": 0.4874105659839838,
+            "element-count": 0.43913933042319153,
+            "index": 0.5703114409007015,
+            "row": 0.5447618174598824
+          }
+        },
+        "pair": {
+          "margin": 0.02989097175698463,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.700087148440036,
+            "WORD": 0.7299781201970206,
+            "byte-count": 0.6751953409475168,
+            "column": 0.47511735195117205,
+            "element-count": 0.5197737800817375,
+            "index": 0.5846532765091705,
+            "row": 0.6256507544597797
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.0246553162467279,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.6748763193450038,
+            "WORD": 0.7139136681122054,
+            "byte-count": 0.6892583518654775,
+            "column": 0.4794552170808,
+            "element-count": 0.5396484324168324,
+            "index": 0.5764131223106229,
+            "row": 0.625965410689213
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "element-count",
+          "behavior_input": "element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "claim": "byte-count",
+          "context": "image",
+          "expected_value": 7,
+          "family": "storage",
+          "form": "full-word",
+          "name": "ByteCountPixel",
+          "name_input": "ByteCountPixel",
+          "pair_input": "Name: ByteCountPixel. Computation: element_count = 7; bytes_per_element = 2; return element_count; Observed return value: 7.",
+          "partition": "heldout",
+          "stem": "Pixel"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.030056260383342748,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.5745648658863801,
+            "WORD": 0.6046211262697229,
+            "byte-count": 0.5656571836045159,
+            "column": 0.4677554261364159,
+            "element-count": 0.44476945258701434,
+            "index": 0.5414421828175209,
+            "row": 0.5148628917028505
+          }
+        },
+        "pair": {
+          "margin": 0.03142852582700706,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.7000699231078352,
+            "WORD": 0.7314984489348423,
+            "byte-count": 0.685067573864842,
+            "column": 0.47402493446633254,
+            "element-count": 0.5153307537529317,
+            "index": 0.5879687411268973,
+            "row": 0.6271412108925373
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.05026617784306109,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.6539287112157544,
+            "WORD": 0.7149496694091558,
+            "byte-count": 0.6646834915660947,
+            "column": 0.527464206010135,
+            "element-count": 0.5511937688246953,
+            "index": 0.6389846398338936,
+            "row": 0.6466208694449631
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "index",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "claim": "index",
+          "context": "sheet",
+          "expected_value": 23,
+          "family": "positions",
+          "form": "abbreviated",
+          "name": "iCell",
+          "name_input": "iCell",
+          "pair_input": "Name: iCell. Computation: linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.04045830195480904,
+          "prediction": "byte-count",
+          "scores": {
+            "DWORD": 0.3767061979470717,
+            "WORD": 0.4488813445681541,
+            "byte-count": 0.606284627667486,
+            "column": 0.4908826645294273,
+            "element-count": 0.4462019069307559,
+            "index": 0.5320145559747126,
+            "row": 0.565826325712677
+          }
+        },
+        "pair": {
+          "margin": 0.05624580377079669,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.688485018377969,
+            "WORD": 0.7447308221487657,
+            "byte-count": 0.6814933880407488,
+            "column": 0.5329015220290036,
+            "element-count": 0.5376205541885124,
+            "index": 0.6589239456105633,
+            "row": 0.6759966556778221
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.05026617784306109,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.6539287112157544,
+            "WORD": 0.7149496694091558,
+            "byte-count": 0.6646834915660947,
+            "column": 0.527464206010135,
+            "element-count": 0.5511937688246953,
+            "index": 0.6389846398338936,
+            "row": 0.6466208694449631
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "index",
+          "behavior_input": "linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "claim": "row",
+          "context": "sheet",
+          "expected_value": 23,
+          "family": "positions",
+          "form": "abbreviated",
+          "name": "rwCell",
+          "name_input": "rwCell",
+          "pair_input": "Name: rwCell. Computation: linear_index = 23; columns = 7; return linear_index; Observed return value: 23.",
+          "partition": "heldout",
+          "stem": "Cell"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.011538343513729954,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.49416636539253544,
+            "WORD": 0.5173354968668318,
+            "byte-count": 0.5057971533531018,
+            "column": 0.39965740961258217,
+            "element-count": 0.36732122493428326,
+            "index": 0.4556946649845987,
+            "row": 0.4847304607078891
+          }
+        },
+        "pair": {
+          "margin": 0.05070449922562614,
+          "prediction": "WORD",
+          "scores": {
+            "DWORD": 0.6976335124514954,
+            "WORD": 0.7483380116771216,
+            "byte-count": 0.6776341675754974,
+            "column": 0.5273357681951629,
+            "element-count": 0.5340917966597506,
+            "index": 0.6537251277054532,
+            "row": 0.6707715091045481
+          }
+        }
+      },
+      {
+        "agreement_prediction": false,
+        "behavior": {
+          "margin": 0.030349391782291346,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.8228250652963294,
+            "WORD": 0.792475673514038,
+            "byte-count": 0.5689934911485955,
+            "column": 0.4380687394749329,
+            "element-count": 0.4481986974672323,
+            "index": 0.5484054442495484,
+            "row": 0.578753292446798
+          }
+        },
+        "case": {
+          "agrees": true,
+          "behavior": "DWORD",
+          "behavior_input": "input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "claim": "DWORD",
+          "context": "counter",
+          "expected_value": 131073,
+          "family": "integer-width",
+          "form": "abbreviated",
+          "name": "dwCounter",
+          "name_input": "dwCounter",
+          "pair_input": "Name: dwCounter. Computation: input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.014591014189623053,
+          "prediction": "row",
+          "scores": {
+            "DWORD": 0.527244953285338,
+            "WORD": 0.5262067946154304,
+            "byte-count": 0.5744081078051207,
+            "column": 0.5018686974494682,
+            "element-count": 0.42935220687201753,
+            "index": 0.5435651924566374,
+            "row": 0.5889991219947438
+          }
+        },
+        "pair": {
+          "margin": 0.0315593425706201,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.8302692557002775,
+            "WORD": 0.7987099131296574,
+            "byte-count": 0.5853925607284963,
+            "column": 0.4365453365189511,
+            "element-count": 0.4363241404810684,
+            "index": 0.5570482725981318,
+            "row": 0.5941399192220473
+          }
+        }
+      },
+      {
+        "agreement_prediction": true,
+        "behavior": {
+          "margin": 0.030349391782291346,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.8228250652963294,
+            "WORD": 0.792475673514038,
+            "byte-count": 0.5689934911485955,
+            "column": 0.4380687394749329,
+            "element-count": 0.4481986974672323,
+            "index": 0.5484054442495484,
+            "row": 0.578753292446798
+          }
+        },
+        "case": {
+          "agrees": false,
+          "behavior": "DWORD",
+          "behavior_input": "input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "claim": "WORD",
+          "context": "counter",
+          "expected_value": 131073,
+          "family": "integer-width",
+          "form": "full-word",
+          "name": "Unsigned16BitValueCounter",
+          "name_input": "Unsigned16BitValueCounter",
+          "pair_input": "Name: Unsigned16BitValueCounter. Computation: input_value = 131073; return input_value % 4294967296; Observed return value: 131073.",
+          "partition": "heldout",
+          "stem": "Counter"
+        },
+        "correct": false,
+        "name": {
+          "margin": 0.023871115680159538,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.6114167574970385,
+            "WORD": 0.587545641816879,
+            "byte-count": 0.5853246318861691,
+            "column": 0.4040427979206203,
+            "element-count": 0.3936146745639682,
+            "index": 0.48774894853280654,
+            "row": 0.5128197549122633
+          }
+        },
+        "pair": {
+          "margin": 0.03245386689437091,
+          "prediction": "DWORD",
+          "scores": {
+            "DWORD": 0.8281342471843253,
+            "WORD": 0.7956803802899544,
+            "byte-count": 0.5978332497590851,
+            "column": 0.42979619045893347,
+            "element-count": 0.43516463449526044,
+            "index": 0.5552479426606788,
+            "row": 0.5899168978309798
+          }
+        }
+      }
+    ]
+  }
+]

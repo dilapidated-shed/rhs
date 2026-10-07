@@ -1,0 +1,100 @@
+"""Independent case definitions. No embeddings or fitted answers live here."""
+import csv
+from pathlib import Path
+from builtins import list, dict, ValueError
+
+def primitives(root ∈ str) → list[dict[str, str]]:
+    handle ∈ object ← Path(root + "/tests/hungarian_grounding/primitives.tsv").open()
+    result ∈ list[dict[str, str]] ← list(csv.DictReader(handle, delimiter="\t"))
+    handle.close()
+    return result
+
+def contexts() → list[dict[str, object]]:
+    return [
+        {"id": "transport", "family": "storage", "partition": "train", "stems": ["Packet", "Frame"], "a": 3, "b": 4},
+        {"id": "image", "family": "storage", "partition": "heldout", "stems": ["Raster", "Pixel"], "a": 7, "b": 2},
+        {"id": "audio", "family": "storage", "partition": "heldout", "stems": ["Sample", "Wave"], "a": 5, "b": 8},
+        {"id": "board", "family": "positions", "partition": "train", "stems": ["Tile", "Square"], "a": 11, "b": 5},
+        {"id": "sheet", "family": "positions", "partition": "heldout", "stems": ["Cell", "Sheet"], "a": 23, "b": 7},
+        {"id": "screen", "family": "positions", "partition": "heldout", "stems": ["Screen", "Point"], "a": 19, "b": 6},
+        {"id": "flags", "family": "integer-width", "partition": "train", "stems": ["Flags", "Mask"], "a": 70000, "b": 0},
+        {"id": "counter", "family": "integer-width", "partition": "heldout", "stems": ["Counter", "Ticks"], "a": 131073, "b": 0},
+        {"id": "register", "family": "integer-width", "partition": "heldout", "stems": ["Register", "Port"], "a": 4295032834, "b": 0}
+    ]
+
+def behavior(context ∈ dict[str, object], facet ∈ str) → dict[str, object]:
+    a ∈ int ← int(context["a"])
+    b ∈ int ← int(context["b"])
+    result ∈ int ← 0
+    source ∈ str ← ""
+    if facet == "byte-count":
+        result ← a × b
+        source ← "element_count = " + str(a) + "; bytes_per_element = " + str(b) + "; return element_count * bytes_per_element;"
+    elif facet == "element-count":
+        result ← a
+        source ← "element_count = " + str(a) + "; bytes_per_element = " + str(b) + "; return element_count;"
+    elif facet == "index":
+        result ← a
+        source ← "linear_index = " + str(a) + "; columns = " + str(b) + "; return linear_index;"
+    elif facet == "row":
+        result ← a // b
+        source ← "linear_index = " + str(a) + "; columns = " + str(b) + "; return linear_index // columns;"
+    elif facet == "column":
+        result ← a % b
+        source ← "linear_index = " + str(a) + "; columns = " + str(b) + "; return linear_index % columns;"
+    elif facet == "WORD":
+        result ← a % 65536
+        source ← "input_value = " + str(a) + "; return input_value % 65536;"
+    elif facet == "DWORD":
+        result ← a % 4294967296
+        source ← "input_value = " + str(a) + "; return input_value % 4294967296;"
+    else:
+        raise ValueError("unknown computation facet")
+    return {"source": source, "value": result, "input": source + " Observed return value: " + str(result) + "."}
+
+def corpus(root ∈ str) → dict[str, object]:
+    kinds ∈ list[dict[str, str]] ← primitives(root)
+    edges ∈ list[dict[str, str]] ← []
+    cases ∈ list[dict[str, object]] ← []
+    inputs ∈ list[str] ← []
+    for kind in kinds:
+        inputs.append(kind["meaning"])
+    inputs.append("quantity")
+    for context in contexts():
+        stems ∈ list[str] ← list(context["stems"])
+        family_kinds ∈ list[dict[str, str]] ← []
+        for kind in kinds:
+            if kind["family"] == context["family"]:
+                family_kinds.append(kind)
+        for stem in stems:
+            inputs.append(stem)
+            for kind in family_kinds:
+                # Entire element-count facet is absent from training edges.
+                if context["partition"] == "train" and kind["facet"] == "element-count":
+                    continue
+                for form in ["abbreviated", "full-word", "nonsense", "misleading"]:
+                    spelling ∈ str ← kind["prefix"]
+                    if form == "full-word":
+                        spelling ← kind["full_word"]
+                    elif form == "nonsense":
+                        spelling ← kind["nonsense"]
+                    elif form == "misleading":
+                        next_index ∈ int ← (int(family_kinds.index(kind)) + 1) % len(family_kinds)
+                        spelling ← family_kinds[next_index]["prefix"]
+                    on ∈ str ← spelling + stem
+                    inputs.append(on)
+                    edges.append({"context": str(context["id"]), "family": kind["family"], "partition": str(context["partition"]), "facet": kind["facet"], "form": form, "off": stem, "on": on})
+            for claim in family_kinds:
+                for form in ["abbreviated", "full-word"]:
+                    name ∈ str ← claim["prefix"] + stem
+                    if form == "full-word":
+                        name ← claim["full_word"] + stem
+                    for computation in family_kinds:
+                        observed ∈ dict[str, object] ← behavior(context, computation["facet"])
+                        input_behavior ∈ str ← str(observed["input"])
+                        input_pair ∈ str ← "Name: " + name + ". Computation: " + input_behavior
+                        inputs.extend([name, input_behavior, input_pair])
+                        cases.append({"context": context["id"], "family": context["family"], "partition": context["partition"], "stem": stem, "form": form, "name": name, "claim": claim["facet"], "behavior": computation["facet"], "agrees": claim["facet"] == computation["facet"], "expected_value": observed["value"], "name_input": name, "behavior_input": input_behavior, "pair_input": input_pair})
+    inputs.extend(["aBcd", "aBcD", "ABcd", "ABcD"])
+    unique ∈ list[str] ← list(dict.fromkeys(inputs))
+    return {"primitives": kinds, "contexts": contexts(), "edges": edges, "cases": cases, "inputs": unique}

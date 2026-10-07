@@ -1,0 +1,17 @@
+#!/usr/bin/env grease
+# Executed by the pinned Grease runtime, not Bash or a translated smoke.
+var root = ENV.RHS_ROOT
+var ithon = ENV.RHS_ITHON
+var output = ENV.RHS_OUTPUT
+cd $root
+printf '\033[36mRHS-2 deterministic checks\033[0m\n'
+$ithon tests/hungarian_grounding/check.pi $root $ithon
+# Existing historical Python is explicitly preserved migration debt.
+python3 -m unittest -v test_vector_transforms.py tests.hungarian_notation.test_probe
+if (ENV.RHS_MODE === 'models') {
+  var model = ENV.RHS_MODEL
+  var revision = ENV.RHS_REVISION
+  printf '\033[36mRHS-2 actual model execution\033[0m\n'
+  $ithon tests/hungarian_grounding/provider.pi $root $output $model $revision
+}
+printf '\033[32mPASS required stages completed\033[0m\n'

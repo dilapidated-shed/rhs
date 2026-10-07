@@ -52,4 +52,18 @@ truth about the program names.
 
 The current `.py` source and runners are existing Python migration debt, not the
 permanent RHS implementation language. `name_vectors.pi` is a provisional Ithon
-sketch and is not presently backed by a repository-local Ithon frontend check.
+sketch; the grounding checks now check its source with the maintained Ithon
+frontend. Frontend acceptance alone does not qualify its model provider.
+
+[tests/hungarian_grounding/](tests/hungarian_grounding/) contains RHS-2's
+executed predeclared experiment separating prefix recovery, full-word meaning
+correspondence and name/computation agreement. The provider/experiment use
+whole-module-checked Ithon, with Grease and the pinned Cat Food / Flexible Pipes
+interfaces controlling execution on GitHub Ubuntu. Ordinary PR checks run without
+model downloads; five real encoders execute in a separate heavyweight workflow.
+
+The [2026-10-07 report](tests/hungarian_grounding/results/2026-10-07.md) records
+strong prefix recovery for the code models and a negative primary behavioral
+grounding result. It preserves exact source/run/model identities, family and
+condition errors, tokenizer residuals and recomputable raw-evidence manifests.
+The original dated Hungarian report and scorer remain unchanged.

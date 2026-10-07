@@ -1,0 +1,53 @@
+"""Runtime acquisition/identity boundary; execution orchestration is Grease."""
+import sys
+import os
+import json
+import hashlib
+import subprocess
+from pathlib import Path
+from builtins import list, dict, ValueError
+
+args ∈ list[str] ← list(sys.argv)
+root ∈ str ← args[1]
+mode ∈ str ← args[2]
+runtime ∈ str ← root + "/_runtime"
+grease ∈ str ← runtime + "/grease"
+ithon ∈ str ← root + "/_ithon/ithon"
+native ∈ Path ← Path(runtime + "/_bin/cxx-asan/ysh")
+if not native.is_file():
+    raise ValueError("declared prebuilt Grease artifact missing")
+digest ∈ str ← hashlib.sha256(native.read_bytes()).hexdigest()
+if digest != "c2732dca67fa726858a8dd2f2bb5e5f8262aa0f5749dc62180551a618004196a":
+    raise ValueError("Grease executable digest mismatch")
+native.chmod(493)
+# The exact Grease/Oils multicall artifact requires its private applet argv[0].
+# This is runtime plumbing inside the implementation boundary, not another shell.
+environment ∈ dict[str, str] ← dict(os.environ)
+environment["ASAN_OPTIONS"] ← "detect_leaks=0"
+environment["PYTHONPATH"] ← root + ":" + root + "/tests/hungarian_grounding"
+environment["RHS_ITHON"] ← ithon
+environment["RHS_ROOT"] ← root
+environment["RHS_OUTPUT"] ← root + "/model-results"
+environment["RHS_MODE"] ← mode.replace("stage-", "")
+Path(root + "/model-results").mkdir(exist_ok=True)
+environment["ITHON_CHECK_RECEIPT"] ← root + "/model-results/checked.jsonl"
+for owner in ["_ithon", "_catfood", "_fp"]:
+    revision ∈ object ← subprocess.run(["git", "-C", root + "/" + owner, "rev-parse", "HEAD"], check=True, capture_output=True, text=True)
+    print(owner + " " + str(str(revision.stdout).strip()))
+source_identity ∈ object ← subprocess.run(["git", "-C", root, "rev-parse", "HEAD"], check=True, capture_output=True, text=True)
+environment["RHS_SOURCE"] ← str(str(source_identity.stdout).strip())
+# Use Cat Food's verified local inventory API; this registers only host checkouts.
+for tool in ["ithon"]:
+    checkout ∈ str ← root + "/_ithon"
+    subprocess.run([root + "/_catfood/catfood", "register", tool, "test", checkout], env=environment, check=True)
+    subprocess.run([root + "/_catfood/catfood", "where", tool], env=environment, check=True)
+Path(root + "/model-results/runtime.tsv").write_text("grease_executable_sha256\t" + digest + "\ngrease_source\tf20c8a333d82b20781e1d024c0293dd4acf4ba12\ngrease_producer_run\t37474007912\nithon\td6e83969f82512e920fb17b44326cb54f31d015c\ncatfood\t62ac940588f5ee4c5be468d48e38d74514da3757\nflexible_pipes\t424e1972da3bab1bc7ec97a6094422fe7bb211f5\n")
+child ∈ object ← None
+if mode.startswith("stage-"):
+    child ← subprocess.run(["ysh", root + "/tests/hungarian_grounding/run.grease"], executable=str(native), env=environment)
+else:
+    # Use the owner's existing command-stage API without expanding its Python.
+    specification ∈ dict[str, object] ← {"schema_version": 1, "name": "rhs-hungarian-grounding", "required_stages": ["checked-grease-experiment"], "stages": [{"name": "checked-grease-experiment", "kind": "command", "argv": [ithon, root + "/tests/hungarian_grounding/bootstrap.pi", root, "stage-" + mode]}]}
+    Path(root + "/_fp/pipelines/rhs-hungarian-grounding.json").write_text(str(json.dumps(specification, indent=2)) + "\n")
+    child ← subprocess.run([sys.executable, root + "/_fp/scripts/run-pipeline", "rhs-hungarian-grounding", "--runs-root", root + "/model-results/pipeline"], env=environment)
+sys.exit(int(child.returncode))

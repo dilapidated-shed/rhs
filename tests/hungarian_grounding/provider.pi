@@ -1,0 +1,101 @@
+"""Checked task-specific Hugging Face encoder adapter, with raw evidence."""
+import json
+import math
+import sys
+import platform
+import os
+import hashlib
+import importlib.metadata
+from pathlib import Path
+from builtins import list, dict, ValueError, Exception
+import fixtures
+import score
+
+def execute(root ∈ str, output ∈ str, model_id ∈ str, revision ∈ str) → None:
+    import torch
+    from transformers import AutoModel, AutoTokenizer
+    from huggingface_hub import HfApi
+    from tests.hungarian_notation.fixtures import all_edges
+    from tests.hungarian_notation.probe import score_model, case_d_minus_d_alignment
+    folder ∈ Path ← Path(output)
+    folder.mkdir(parents=True, exist_ok=True)
+    data ∈ dict[str, object] ← fixtures.corpus(root)
+    inputs ∈ list[str] ← list(data["inputs"])
+    historical_edges ∈ list[object] ← list(all_edges())
+    for edge in historical_edges:
+        inputs.extend([str(edge.off_name), str(edge.on_name)])
+    inputs ← list(dict.fromkeys(inputs))
+    api ∈ object ← HfApi()
+    resolved ∈ str ← str(api.model_info(model_id, revision=revision).sha)
+    if resolved != revision or len(resolved) != 40:
+        raise ValueError("resolved model revision does not equal immutable pin")
+    tokenizer ∈ object ← AutoTokenizer.from_pretrained(model_id, revision=resolved)
+    encoder ∈ object ← AutoModel.from_pretrained(model_id, revision=resolved)
+    encoder.to("cpu")
+    encoder.eval()
+    torch.manual_seed(0)
+    torch.set_num_threads(2)
+    dependencies ∈ dict[str, str] ← {}
+    for package in ["torch", "transformers", "tokenizers", "numpy", "huggingface_hub", "safetensors"]:
+        dependencies[package] ← importlib.metadata.version(package)
+    actual_model_revision ∈ str ← str(encoder.config._commit_hash)
+    if actual_model_revision != resolved:
+        raise ValueError("loaded encoder config has different revision")
+    model_receipt ∈ dict[str, object] ← {"provider": "HuggingFace", "model": model_id, "requested_revision": revision, "resolved_model_revision": resolved, "resolved_tokenizer_revision": resolved, "tokenizer_init_commit": tokenizer.init_kwargs.get("_commit_hash"), "layer": "last_hidden_state", "pooling": "attention-mask mean including special tokens", "device": "cpu", "dtype": str(encoder.dtype), "seed": 0, "threads": 2, "batch_size": 1, "max_length": 256, "truncation": False, "dependencies": dependencies, "python": platform.python_version(), "host": platform.platform(), "source": sys.argv, "github_run": str(os.environ.get("GITHUB_RUN_ID", "LOCAL"))}
+    model_receipt["source_commit"] ← os.environ.get("RHS_SOURCE")
+    model_receipt["provider_sha256"] ← hashlib.sha256(Path(root + "/tests/hungarian_grounding/provider.pi").read_bytes()).hexdigest()
+    model_receipt["protocol_sha256"] ← hashlib.sha256(Path(root + "/tests/hungarian_grounding/protocol.md").read_bytes()).hexdigest()
+    tokenizer.save_pretrained(str(folder.joinpath("tokenizer")))
+    encoder.config.save_pretrained(str(folder.joinpath("model-config")))
+    folder.joinpath("model.json").write_text(str(json.dumps(model_receipt, indent=2, sort_keys=True)) + "\n")
+    folder.joinpath("cases.json").write_text(str(json.dumps(data, indent=2, sort_keys=True)) + "\n")
+    vectors ∈ dict[str, list[float]] ← {}
+    raw ∈ object ← folder.joinpath("observations.jsonl").open("w")
+    for text in inputs:
+        encoded ∈ dict[str, object] ← dict(tokenizer.__call__(text, return_tensors="pt", truncation=False))
+        token_ids ∈ list[int] ← list(encoded["input_ids"].__getitem__(0).tolist())
+        if len(token_ids) > 256:
+            raise ValueError("input exceeds fixed length; truncation forbidden")
+        with torch.no_grad():
+            result ∈ object ← encoder.forward(**encoded)
+            hidden ∈ object ← result.last_hidden_state
+            mask ∈ object ← encoded["attention_mask"].unsqueeze(-1).to(hidden.dtype)
+            summed ∈ object ← torch.sum(torch.mul(hidden, mask), dim=1)
+            denominator ∈ object ← torch.sum(mask, dim=1).clamp(min=1)
+            pooled ∈ object ← torch.div(summed, denominator)
+        vector ∈ list[float] ← list(pooled.__getitem__(0).detach().cpu().tolist())
+        for coordinate in vector:
+            if not math.isfinite(coordinate):
+                raise ValueError("nonfinite model coordinate")
+        vectors[text] ← vector
+        record ∈ dict[str, object] ← {"input": text, "input_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(), "token_ids": token_ids, "tokens": tokenizer.convert_ids_to_tokens(token_ids), "attention_mask": encoded["attention_mask"].__getitem__(0).tolist(), "vector": vector}
+        raw.write(str(json.dumps(record, sort_keys=True)) + "\n")
+        raw.flush()
+    raw.close()
+    evaluated ∈ dict[str, object] ← score.evaluate(data, vectors)
+    folder.joinpath("scores.json").write_text(str(json.dumps(evaluated, indent=2, sort_keys=True)) + "\n")
+    def recorded_model(text ∈ str) → list[float]:
+        return vectors[text]
+    # Existing historical scorer is preserved, explicitly invoked legacy debt.
+    old ∈ object ← score_model(model_id, recorded_model, all_edges())
+    old_report ∈ dict[str, object] ← {"correct": old.correct_edges, "count": old.total_edges, "D_minus_d_alignment": case_d_minus_d_alignment(old), "zero_edges": 0, "errors": []}
+    old_errors ∈ list[dict[str, str]] ← []
+    old_zero ∈ int ← 0
+    old_edge_evidence ∈ list[object] ← list(old.edges)
+    for item in old_edge_evidence:
+        if float(item.norm) == 0.0:
+            old_zero ← old_zero + 1
+        if str(item.predicted_facet) != str(item.edge.facet):
+            old_errors.append({"off": str(item.edge.off_name), "on": str(item.edge.on_name), "truth": str(item.edge.facet), "prediction": str(item.predicted_facet)})
+    old_report["zero_edges"] ← old_zero
+    old_report["errors"] ← old_errors
+    folder.joinpath("historical-rerun.json").write_text(str(json.dumps(old_report, indent=2, sort_keys=True)) + "\n")
+    print(json.dumps({"model": model_id, "status": "EXECUTED", "inputs": len(inputs), "old": old_report, "summaries": evaluated["summaries"]}, sort_keys=True))
+
+args ∈ list[str] ← list(sys.argv)
+try:
+    execute(args[1], args[2], args[3], args[4])
+except Exception as error:
+    Path(args[2]).mkdir(parents=True, exist_ok=True)
+    Path(args[2] + "/failure.txt").write_text(str(error) + "\n")
+    raise

@@ -1,0 +1,20 @@
+"""Recompute scores from raw captured observations without calling any model."""
+import sys
+import json
+from pathlib import Path
+from builtins import list, dict, ValueError
+import score
+
+args ∈ list[str] ← list(sys.argv)
+folder ∈ Path ← Path(args[1])
+data ∈ dict[str, object] ← dict(json.loads(folder.joinpath("cases.json").read_text()))
+vectors ∈ dict[str, list[float]] ← {}
+lines ∈ list[str] ← folder.joinpath("observations.jsonl").read_text().splitlines()
+for line in lines:
+    observation ∈ dict[str, object] ← dict(json.loads(line))
+    vectors[str(observation["input"])] ← list(observation["vector"])
+result ∈ dict[str, object] ← score.evaluate(data, vectors)
+original ∈ dict[str, object] ← dict(json.loads(folder.joinpath("scores.json").read_text()))
+if result != original:
+    raise ValueError("recomputed scores differ from captured scores")
+print(json.dumps(result["summaries"], indent=2))
