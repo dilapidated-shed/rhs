@@ -4,3 +4,9 @@ __pycache__/
 venv/
 *.jsonl
 model-results/
+_ithon/
+_catfood/
+_fp/
+_runtime/
+model-results/
+dependencies.lock

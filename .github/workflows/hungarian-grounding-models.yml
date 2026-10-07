@@ -1,0 +1,72 @@
+name: RHS grounding actual models
+on:
+  workflow_dispatch:
+  push:
+    branches: [sun/rhs-hungarian-grounding]
+    paths:
+      - 'tests/hungarian_grounding/**'
+      - '!tests/hungarian_grounding/results/**'
+      - 'tests/hungarian_notation/**'
+      - 'name_vectors.pi'
+      - 'requirements-models.txt'
+      - '.github/actions/grounding-runtime/**'
+      - '.github/workflows/hungarian-grounding-models.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  encoder:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - key: codeberta
+            model: huggingface/CodeBERTa-small-v1
+            revision: e93b5898cff07f03f1c1c09cde284d1b85962363
+          - key: codebert
+            model: microsoft/codebert-base
+            revision: 3b0952feddeffad0063f274080e3c23d75e7eb39
+          - key: minilm
+            model: sentence-transformers/all-MiniLM-L6-v2
+            revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+          - key: bert-cased
+            model: bert-base-cased
+            revision: cd5ef92a9fb2f889e972770a36d4ed042daf221e
+          - key: bert-uncased
+            model: bert-base-uncased
+            revision: 86b5e0934494bd15c9632b12f734a8a67f723594
+    env:
+      HF_HOME: ${{ runner.temp }}/rhs-huggingface
+      RHS_MODEL: ${{ matrix.model }}
+      RHS_REVISION: ${{ matrix.revision }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: ./.github/actions/grounding-runtime
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Install declared foreign model libraries
+        run: python3 -m pip install -r requirements-models.txt
+      - name: Capture complete resolved dependency lock
+        run: python3 -m pip freeze --all > dependencies.lock
+      - name: Execute model stage through checked Ithon and Grease
+        run: _ithon/ithon tests/hungarian_grounding/bootstrap.pi "$GITHUB_WORKSPACE" models
+      - name: Recompute predictions offline from captured vectors
+        env:
+          PYTHONPATH: ${{ github.workspace }}/tests/hungarian_grounding
+        run: _ithon/ithon tests/hungarian_grounding/report.pi "$GITHUB_WORKSPACE/model-results"
+      - name: Preserve all observations and exact identities
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rhs-grounding-${{ matrix.key }}-${{ github.sha }}
+          path: |
+            model-results
+            dependencies.lock
+          if-no-files-found: error
+          retention-days: 90

@@ -1,0 +1,148 @@
+"""Frozen scoring rules; usable offline with captured vectors."""
+import math
+from builtins import list, dict, ValueError, abs
+
+def difference(left ∈ list[float], right ∈ list[float]) → list[float]:
+    if len(left) != len(right) or len(left) == 0:
+        raise ValueError("vector dimensions differ or are empty")
+    result ∈ list[float] ← []
+    for index in range(len(left)):
+        result.append(left[index] - right[index])
+    return result
+
+def length(vector ∈ list[float]) → float:
+    total ∈ float ← 0.0
+    for value in vector:
+        total ← total + value × value
+    return math.sqrt(total)
+
+def cosine(left ∈ list[float], right ∈ list[float]) → float | None:
+    if len(left) != len(right) or len(left) == 0:
+        raise ValueError("vector dimensions differ or are empty")
+    denominator ∈ float ← length(left) × length(right)
+    if denominator == 0.0:
+        return None
+    total ∈ float ← 0.0
+    for index in range(len(left)):
+        total ← total + left[index] × right[index]
+    return total / denominator
+
+def mean(vectors ∈ list[list[float]]) → list[float]:
+    if len(vectors) == 0:
+        raise ValueError("empty prototype")
+    result ∈ list[float] ← []
+    for index in range(len(vectors[0])):
+        total ∈ float ← 0.0
+        for vector in vectors:
+            if len(vector) != len(vectors[0]):
+                raise ValueError("prototype dimensions differ")
+            total ← total + vector[index]
+        result.append(total / len(vectors))
+    return result
+
+def classify(vector ∈ list[float], prototypes ∈ dict[str, list[float]]) → dict[str, object]:
+    scores ∈ dict[str, object] ← {}
+    best ∈ float ← -2.0
+    runner_up ∈ float ← -2.0
+    label ∈ str ← "ABSTAIN"
+    for candidate in prototypes:
+        similarity ∈ float | None ← cosine(vector, prototypes[candidate])
+        scores[candidate] ← similarity
+        if similarity != None:
+            value ∈ float ← float(similarity)
+            if value > best:
+                runner_up ← best
+                best ← value
+                label ← candidate
+            elif value > runner_up:
+                runner_up ← value
+    if float(abs(best - runner_up)) <= 0.000000000001:
+        label ← "ABSTAIN"
+    return {"prediction": label, "scores": scores, "margin": best - runner_up}
+
+def evaluate(data ∈ dict[str, object], vectors ∈ dict[str, list[float]]) → dict[str, object]:
+    kinds ∈ list[dict[str, str]] ← list(data["primitives"])
+    edges ∈ list[dict[str, str]] ← list(data["edges"])
+    cases ∈ list[dict[str, object]] ← list(data["cases"])
+    prefixes ∈ dict[str, list[float]] ← {}
+    full_words ∈ dict[str, list[float]] ← {}
+    anchors ∈ dict[str, list[float]] ← {}
+    meaning_vectors ∈ dict[str, list[float]] ← {}
+    for kind in kinds:
+        anchors[kind["facet"]] ← difference(vectors[kind["meaning"]], vectors["quantity"])
+        meaning_vectors[kind["facet"]] ← vectors[kind["meaning"]]
+        for form in ["abbreviated", "full-word"]:
+            examples ∈ list[list[float]] ← []
+            for edge in edges:
+                if edge["partition"] == "train" and edge["facet"] == kind["facet"] and edge["form"] == form:
+                    examples.append(difference(vectors[edge["on"]], vectors[edge["off"]]))
+            if len(examples) > 0:
+                if form == "abbreviated":
+                    prefixes[kind["facet"]] ← mean(examples)
+                else:
+                    full_words[kind["facet"]] ← mean(examples)
+    edge_results ∈ list[dict[str, object]] ← []
+    for edge in edges:
+        if edge["partition"] != "heldout":
+            continue
+        delta ∈ list[float] ← difference(vectors[edge["on"]], vectors[edge["off"]])
+        question ∈ str ← "context-holdout"
+        if edge["facet"] == "element-count":
+            question ← "whole-facet-zero-shot"
+        edge_results.append({"edge": edge, "question": question, "norm": length(delta), "prefix": classify(delta, prefixes), "full_word": classify(delta, full_words), "anchor": classify(delta, anchors)})
+    case_results ∈ list[dict[str, object]] ← []
+    for case in cases:
+        if case["partition"] != "heldout":
+            continue
+        name_result ∈ dict[str, object] ← classify(vectors[str(case["name_input"])], meaning_vectors)
+        behavior_result ∈ dict[str, object] ← classify(vectors[str(case["behavior_input"])], meaning_vectors)
+        pair_result ∈ dict[str, object] ← classify(vectors[str(case["pair_input"])], meaning_vectors)
+        predicted ∈ object ← "ABSTAIN"
+        if name_result["prediction"] != "ABSTAIN" and behavior_result["prediction"] != "ABSTAIN":
+            predicted ← name_result["prediction"] == behavior_result["prediction"]
+        case_results.append({"case": case, "name": name_result, "behavior": behavior_result, "pair": pair_result, "agreement_prediction": predicted, "correct": predicted == case["agrees"]})
+    summaries ∈ list[dict[str, object]] ← []
+    for family in ["storage", "positions", "integer-width"]:
+        for form in ["abbreviated", "full-word", "all"]:
+            correct ∈ int ← 0
+            count ∈ int ← 0
+            positive ∈ int ← 0
+            negative ∈ int ← 0
+            true_positive ∈ int ← 0
+            true_negative ∈ int ← 0
+            for row in case_results:
+                case ← dict(row["case"])
+                if case["family"] == family and (form == "all" or case["form"] == form):
+                    count ← count + 1
+                    if bool(row["correct"]):
+                        correct ← correct + 1
+                    if bool(case["agrees"]):
+                        positive ← positive + 1
+                        if row["agreement_prediction"] == True:
+                            true_positive ← true_positive + 1
+                    else:
+                        negative ← negative + 1
+                        if row["agreement_prediction"] == False:
+                            true_negative ← true_negative + 1
+            summaries.append({"family": family, "form": form, "correct": correct, "count": count, "positive": positive, "negative": negative, "true_positive": true_positive, "true_negative": true_negative, "balanced_accuracy": (true_positive / positive + true_negative / negative) / 2.0})
+    null_results ∈ list[dict[str, object]] ← []
+    for family in ["storage", "positions", "integer-width"]:
+        labels ∈ list[str] ← []
+        for kind in kinds:
+            if kind["family"] == family:
+                labels.append(kind["facet"])
+        for rotation in range(1, len(labels)):
+            null_correct ∈ int ← 0
+            null_count ∈ int ← 0
+            for row in case_results:
+                case ← dict(row["case"])
+                if case["family"] == family:
+                    shuffled ∈ str ← labels[(int(labels.index(str(case["claim"]))) + rotation) % len(labels)]
+                    null_agrees ∈ bool ← shuffled == case["behavior"]
+                    null_count ← null_count + 1
+                    if row["agreement_prediction"] == null_agrees:
+                        null_correct ← null_correct + 1
+            null_results.append({"family": family, "rotation": rotation, "correct": null_correct, "count": null_count})
+    final_first ∈ list[float] ← difference(vectors["aBcD"], vectors["aBcd"])
+    final_second ∈ list[float] ← difference(vectors["ABcD"], vectors["ABcd"])
+    return {"edge_results": edge_results, "case_results": case_results, "summaries": summaries, "conditional_label_null": null_results, "D_minus_d_alignment": cosine(final_first, final_second), "case_zero_edges": int(length(final_first) == 0.0) + int(length(final_second) == 0.0), "prefix_prototypes": prefixes, "full_word_prototypes": full_words, "anchors": anchors}
