@@ -40,7 +40,8 @@ def clean_payload(payload ∈ str) → None:
         if token in lower:
             raise ValueError("Candidate payload discloses benchmark labels: " + token)
     for filename in FILES:
-        leaf ∈ str ← filename.split("/")[-1]
+        parts ∈ list[str] ← filename.split("/")
+        leaf ∈ str ← parts[-1]
         leaf_lower ∈ str ← leaf.lower()
         if leaf_lower in lower:
             raise ValueError("Candidate payload discloses benchmark lineage")

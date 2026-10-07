@@ -12,7 +12,8 @@ WRAPPERS ∈ list[str] ← ["static void exchange(unsigned *a,unsigned *b) { exc
 
 def select_core(text ∈ str, corrected ∈ bool) → str:
     clean ∈ str ← re.sub(r"/\*.*?\*/", "", text, flags=re.S)
-    clean ← clean.split("int main(void)")[0]
+    parts ∈ list[str] ← clean.split("int main(void)")
+    clean ← parts[0]
     selected ∈ list[str] ← []
     active ∈ bool ← True
     inside ∈ bool ← False

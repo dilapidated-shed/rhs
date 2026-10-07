@@ -65,7 +65,7 @@ def check(output ∈ str) → None:
     for identifier in identifiers:
         evaluate.clean_payload(evaluate.read(output + "/candidate/" + identifier + ".txt"))
         execution ∈ dict[str, object] ← json.loads(evaluate.read(output + "/model/raw/" + identifier + "/execution.json"))
-        execution_state ∈ str ← execution["state"]
+        execution_state ∈ str ← str(execution["state"])
         if execution_state != "EXECUTED":
             raise ValueError("Candidate did not execute this packet")
         evaluate.read(output + "/model/raw/" + identifier + "/response.txt")
