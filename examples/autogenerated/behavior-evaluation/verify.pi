@@ -97,7 +97,8 @@ def check(output ∈ str) → None:
     print("PASS snapshots, disclosure rejection, missing execution, independent grade-only mutation")
 
 def main() → None:
-    args ∈ list[str] ← sys.argv[1:]
+    arguments ∈ list[str] ← sys.argv
+    args ∈ list[str] ← arguments[1:]
     if args[0] == "check":
         print("Ithon verification frontend passed")
     else:

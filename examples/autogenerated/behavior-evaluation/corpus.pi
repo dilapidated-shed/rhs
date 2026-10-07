@@ -32,7 +32,8 @@ def select_core(text ∈ str, corrected ∈ bool) → str:
             selected.append(line.replace('#include "fixture.h"', "#include <stdio.h>"))
     if inside:
         raise ValueError("Unclosed selector")
-    return "\n".join(selected) + "\n"
+    joined ∈ str ← "\n".join(selected)
+    return joined + "\n"
 
 def observer(root ∈ str, family ∈ int, corrected ∈ bool, variant ∈ int) → str:
     original ∈ str ← Path(root + "/" + FILES[family]).read_text()

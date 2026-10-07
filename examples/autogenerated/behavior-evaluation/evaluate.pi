@@ -24,7 +24,8 @@ def write(path ∈ str, value ∈ str) → None:
     Path(path).write_text(value)
 
 def lines_text(lines ∈ list[str]) → str:
-    return "\n".join(lines) + "\n"
+    joined ∈ str ← "\n".join(lines)
+    return joined + "\n"
 
 def contains(value ∈ str, values ∈ list[str]) → bool:
     for item in values:
@@ -184,7 +185,8 @@ def prepare(root ∈ str, output ∈ str, profile ∈ str) → None:
 def exact(output ∈ str) → None:
     require_execution(output)
     findings ∈ list[str] ← ["id\tpayload_sha256\tverdict\tevidence"]
-    for line in read(output + "/contracts.tsv").splitlines()[1:]:
+    contract_lines ∈ list[str] ← read(output + "/contracts.tsv").splitlines()
+    for line in contract_lines[1:]:
         fields ∈ list[str] ← line.split("\t")
         identifier ∈ str ← fields[0]
         relation ∈ str ← fields[1]
@@ -276,7 +278,8 @@ def grade(output ∈ str, labels_path ∈ str, destination ∈ str) → None:
     print(lines_text(summary))
 
 def main() → None:
-    args ∈ list[str] ← sys.argv[1:]
+    arguments ∈ list[str] ← sys.argv
+    args ∈ list[str] ← arguments[1:]
     if args[0] == "check":
         clean_payload("CLAIM\nexample\nSOURCE\nint f(void) { return 0; }\nOBSERVATION\noutput\t0\n")
         print("Ithon evaluator frontend and payload smoke passed")
