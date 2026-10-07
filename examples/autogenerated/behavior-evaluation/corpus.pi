@@ -16,7 +16,8 @@ def select_core(text ∈ str, corrected ∈ bool) → str:
     selected ∈ list[str] ← []
     active ∈ bool ← True
     inside ∈ bool ← False
-    for line in clean.splitlines():
+    lines ∈ list[str] ← clean.splitlines()
+    for line in lines:
         stripped ∈ str ← line.strip()
         if stripped == "#if USE_CORRECTED":
             if inside:

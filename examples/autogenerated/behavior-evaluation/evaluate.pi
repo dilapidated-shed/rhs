@@ -77,7 +77,8 @@ def build_run(source ∈ str, binary ∈ str, optimization ∈ str, profile ∈ 
     if properties["toolchain"] != "ick" or properties["target"] != "Linux/AArch64/QEMU" or properties["ick_revision"] != "e3c2a40b4edafc4d9caca55d1f7c094e6aab9589":
         raise ValueError("Declared consumer build requires this exact ICK-qualified target")
     command ∈ list[str] ← []
-    for arg in read(profile + "/compile-argv.txt").splitlines():
+    arguments ∈ list[str] ← read(profile + "/compile-argv.txt").splitlines()
+    for arg in arguments:
         command.append(arg.replace("@SOURCE@", source).replace("@OUTPUT@", binary).replace("@OPT@", optimization))
     if selector != "":
         command.append(selector)

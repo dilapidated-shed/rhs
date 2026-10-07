@@ -16,7 +16,8 @@ def capture_once(value ∈ object, action ∈ Callable[[object], object], snapsh
 
 def rows(text ∈ str) → dict[str, str]:
     result ∈ dict[str, str] ← {}
-    for line in text.splitlines():
+    lines ∈ list[str] ← text.splitlines()
+    for line in lines:
         fields ∈ list[str] ← line.split("\t")
         if len(fields) != 2:
             raise ValueError("Observation requires exactly two tab-separated fields")
