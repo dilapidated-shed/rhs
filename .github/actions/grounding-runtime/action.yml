@@ -28,3 +28,4 @@ runs:
         artifact-ids: 11418397776
         github-token: ${{ github.token }}
         path: _runtime
+        merge-multiple: true

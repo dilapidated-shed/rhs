@@ -38,7 +38,7 @@ jobs:
             model: bert-base-uncased
             revision: 86b5e0934494bd15c9632b12f734a8a67f723594
     env:
-      HF_HOME: ${{ runner.temp }}/rhs-huggingface
+      HF_HOME: /tmp/rhs-huggingface
       RHS_MODEL: ${{ matrix.model }}
       RHS_REVISION: ${{ matrix.revision }}
     steps:
