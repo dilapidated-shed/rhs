@@ -24,3 +24,10 @@ The current .pi source is the real attempt, checked whole-module before executio
 If the actual foreign invocation fails, preserve its traceback and model status;
 do not replace it with Python or qualify it from syntax alone. Runtime evidence
 and resulting capability gaps are recorded in the dated report.
+
+`analyze.pi` is a post-run descriptive account of frozen predictions. It fits
+no model, anchor, threshold, or partition. It records family counts, the
+predeclared literal-prefix baseline, label rotations, paired interventions,
+token-length residuals and SHA-256 hashes of captured evidence. Its whole source
+is checked by ordinary PR checks; its results are reproducible offline from the
+original vectors.

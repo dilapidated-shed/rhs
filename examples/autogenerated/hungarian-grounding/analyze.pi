@@ -1,0 +1,186 @@
+"""Offline descriptive aggregation. Does not fit or change the scoring rule."""
+import sys
+import json
+import hashlib
+from pathlib import Path
+from builtins import list, dict
+import score
+
+args ∈ list[str] ← list(sys.argv)
+folder ∈ Path ← Path(args[1])
+data ∈ dict[str, object] ← dict(json.loads(folder.joinpath("cases.json").read_text()))
+result ∈ dict[str, object] ← dict(json.loads(folder.joinpath("scores.json").read_text()))
+edge_rows ∈ list[dict[str, object]] ← list(result["edge_results"])
+case_rows ∈ list[dict[str, object]] ← list(result["case_results"])
+summaries ∈ list[dict[str, object]] ← list(result["summaries"])
+kinds ∈ list[dict[str, str]] ← list(data["primitives"])
+observations ∈ dict[str, dict[str, object]] ← {}
+lines ∈ list[str] ← folder.joinpath("observations.jsonl").read_text().splitlines()
+for line in lines:
+    observed ∈ dict[str, object] ← dict(json.loads(line))
+    observations[str(observed["input"])] ← observed
+edge_counts ∈ list[dict[str, object]] ← []
+for question in ["context-holdout", "whole-facet-zero-shot"]:
+    for form in ["abbreviated", "full-word", "nonsense", "misleading"]:
+        for method in ["prefix", "full_word", "anchor"]:
+            total ∈ int ← 0
+            correct ∈ int ← 0
+            zeros ∈ int ← 0
+            for row in edge_rows:
+                edge ∈ dict[str, str] ← dict(row["edge"])
+                if row["question"] == question and edge["form"] == form:
+                    total ← total + 1
+                    prediction ∈ dict[str, object] ← dict(row[method])
+                    if prediction["prediction"] == edge["facet"]:
+                        correct ← correct + 1
+                    if float(row["norm"]) == 0.0:
+                        zeros ← zeros + 1
+            edge_counts.append({"question": question, "form": form, "method": method, "correct": correct, "total": total, "zeros": zeros})
+family_edges ∈ list[dict[str, object]] ← []
+lexical_baselines ∈ list[dict[str, object]] ← []
+for family in ["storage", "positions", "integer-width"]:
+    for form in ["abbreviated", "full-word", "nonsense", "misleading"]:
+        for method in ["prefix", "full_word", "anchor"]:
+            total ← 0
+            correct ← 0
+            lexical_correct ∈ int ← 0
+            for row in edge_rows:
+                edge ← dict(row["edge"])
+                if edge["family"] == family and edge["form"] == form and row["question"] == "context-holdout":
+                    total ← total + 1
+                    prediction ← dict(row[method])
+                    if prediction["prediction"] == edge["facet"]:
+                        correct ← correct + 1
+                    lexical_label ∈ str ← "UNKNOWN"
+                    for kind in kinds:
+                        declared ∈ dict[str, str] ← dict(kind)
+                        if edge["on"] == declared["prefix"] + edge["off"] or edge["on"] == declared["full_word"] + edge["off"]:
+                            lexical_label ← declared["facet"]
+                    if prediction["prediction"] == lexical_label:
+                        lexical_correct ← lexical_correct + 1
+            family_edges.append({"family": family, "form": form, "method": method, "correct": correct, "total": total, "matches_literal_spelling": lexical_correct})
+for form in ["abbreviated", "full-word", "nonsense", "misleading"]:
+    total ← 0
+    correct ← 0
+    for row in edge_rows:
+        edge ← dict(row["edge"])
+        if row["question"] == "context-holdout" and edge["form"] == form:
+            total ← total + 1
+            lexical_label ← "UNKNOWN"
+            for kind in kinds:
+                declared ← dict(kind)
+                if edge["on"] == declared["prefix"] + edge["off"] or edge["on"] == declared["full_word"] + edge["off"]:
+                    lexical_label ← declared["facet"]
+            if lexical_label == edge["facet"]:
+                correct ← correct + 1
+    lexical_baselines.append({"form": form, "correct": correct, "total": total, "rule": "literal prefix/full-word lookup from declared primitives; no vector"})
+conditions ∈ list[dict[str, object]] ← []
+for family in ["storage", "positions", "integer-width"]:
+    for form in ["abbreviated", "full-word"]:
+        for condition in ["name", "behavior", "pair"]:
+            total ← 0
+            correct ← 0
+            for row in case_rows:
+                case ∈ dict[str, object] ← dict(row["case"])
+                if case["family"] == family and case["form"] == form:
+                    total ← total + 1
+                    prediction ← dict(row[condition])
+                    truth ∈ str ← str(case["claim"]) if condition == "name" else str(case["behavior"])
+                    if prediction["prediction"] == truth:
+                        correct ← correct + 1
+            conditions.append({"family": family, "form": form, "condition": condition, "correct": correct, "total": total})
+macro ∈ float ← 0.0
+agreement_correct ∈ int ← 0
+agreement_count ∈ int ← 0
+for summary in summaries:
+    if summary["form"] == "all":
+        macro ← macro + float(summary["balanced_accuracy"]) / 3.0
+        agreement_correct ← agreement_correct + int(summary["correct"])
+        agreement_count ← agreement_count + int(summary["count"])
+token_matching ∈ list[dict[str, object]] ← []
+for family in ["storage", "positions", "integer-width"]:
+    same ∈ int ← 0
+    different ∈ int ← 0
+    matched_rows ∈ list[dict[str, object]] ← []
+    for row in edge_rows:
+        edge ← dict(row["edge"])
+        if edge["family"] == family and edge["form"] == "nonsense":
+            normal ∈ str ← ""
+            for other in edge_rows:
+                other_edge ∈ dict[str, str] ← dict(other["edge"])
+                if other_edge["context"] == edge["context"] and other_edge["off"] == edge["off"] and other_edge["facet"] == edge["facet"] and other_edge["form"] == "abbreviated":
+                    normal ← other_edge["on"]
+            left_tokens ∈ list[int] ← list(observations[normal]["token_ids"])
+            right_tokens ∈ list[int] ← list(observations[edge["on"]]["token_ids"])
+            if len(left_tokens) == len(right_tokens):
+                same ← same + 1
+            else:
+                different ← different + 1
+            matched_rows.append({"normal": normal, "nonsense": edge["on"], "normal_tokens": len(left_tokens), "nonsense_tokens": len(right_tokens)})
+    token_matching.append({"family": family, "same_length": same, "different_length": different, "rows": matched_rows})
+nulls ∈ list[dict[str, object]] ← []
+for family in ["storage", "positions", "integer-width"]:
+    labels ∈ list[str] ← []
+    for kind in kinds:
+        if kind["family"] == family:
+            labels.append(kind["facet"])
+    for rotation in range(1, len(labels)):
+        positive ∈ int ← 0
+        negative ∈ int ← 0
+        tp ∈ int ← 0
+        tn ∈ int ← 0
+        for row in case_rows:
+            case ← dict(row["case"])
+            if case["family"] == family:
+                shuffled ∈ str ← labels[(int(labels.index(str(case["claim"]))) + rotation) % len(labels)]
+                agrees ∈ bool ← shuffled == case["behavior"]
+                if agrees:
+                    positive ← positive + 1
+                    if row["agreement_prediction"] == True:
+                        tp ← tp + 1
+                else:
+                    negative ← negative + 1
+                    if row["agreement_prediction"] == False:
+                        tn ← tn + 1
+        nulls.append({"family": family, "rotation": rotation, "balanced_accuracy": (tp / positive + tn / negative) / 2.0})
+pair_interventions ∈ list[dict[str, object]] ← []
+for family in ["storage", "positions", "integer-width"]:
+    for intervention in ["fixed-name", "fixed-behavior"]:
+        total_pairs ∈ int ← 0
+        correct_pairs ∈ int ← 0
+        for first_index in range(len(case_rows)):
+            first ∈ dict[str, object] ← case_rows[first_index]
+            first_case ∈ dict[str, object] ← dict(first["case"])
+            if first_case["family"] != family:
+                continue
+            for second_index in range(first_index + 1, len(case_rows)):
+                second ∈ dict[str, object] ← case_rows[second_index]
+                second_case ∈ dict[str, object] ← dict(second["case"])
+                if first_case["context"] == second_case["context"] and first_case["stem"] == second_case["stem"] and first_case["form"] == second_case["form"] and first_case["agrees"] != second_case["agrees"]:
+                    selected ∈ bool ← first_case["name"] == second_case["name"] if intervention == "fixed-name" else first_case["behavior"] == second_case["behavior"]
+                    if selected:
+                        total_pairs ← total_pairs + 1
+                        if bool(first["correct"]) and bool(second["correct"]):
+                            correct_pairs ← correct_pairs + 1
+        pair_interventions.append({"family": family, "intervention": intervention, "correct_pairs": correct_pairs, "total_pairs": total_pairs})
+counterexamples ∈ list[dict[str, object]] ← []
+for family in ["storage", "positions", "integer-width"]:
+    for state in [True, False]:
+        chosen ∈ bool ← False
+        for row in case_rows:
+            case ← dict(row["case"])
+            if not chosen and case["family"] == family and case["agrees"] == state and not bool(row["correct"]):
+                counterexamples.append(row)
+                chosen ← True
+case_tokens ∈ dict[str, object] ← {}
+for name in ["aBcd", "aBcD", "ABcd", "ABcD"]:
+    observation ∈ dict[str, object] ← observations[name]
+    case_tokens[name] ← {"token_ids": observation["token_ids"], "tokens": observation["tokens"]}
+evidence_manifest ∈ dict[str, str] ← {}
+evidence_paths ∈ list[Path] ← list(folder.rglob("*"))
+for path in evidence_paths:
+    if path.is_file() and str(path.name) != "analysis.json":
+        evidence_manifest[str(path.relative_to(folder))] ← hashlib.sha256(path.read_bytes()).hexdigest()
+output ∈ dict[str, object] ← {"macro_balanced_accuracy": macro, "agreement_correct": agreement_correct, "agreement_count": agreement_count, "edges": edge_counts, "family_edges": family_edges, "lexical_baselines": lexical_baselines, "conditions": conditions, "summaries": summaries, "token_matching": token_matching, "null": nulls, "paired_interventions": pair_interventions, "counterexamples": counterexamples, "case_tokens": case_tokens, "evidence_sha256": evidence_manifest}
+folder.joinpath("analysis.json").write_text(str(json.dumps(output, sort_keys=True, indent=2)) + "\n")
+print(json.dumps(output, sort_keys=True))
