@@ -1,0 +1,331 @@
+"""Executed corpus, exact relation findings, and independent grading."""
+import sys
+import subprocess
+import json
+from pathlib import Path
+from builtins import ValueError, OSError, TimeoutError, globals
+import checker
+import corpus
+
+FILES ∈ list[str] ← corpus.FILES
+CLAIMS ∈ list[list[str]] ← corpus.CLAIMS
+RELATIONS ∈ list[list[str]] ← corpus.RELATIONS
+
+def digest(data ∈ bytes) → str:
+    value ∈ str ← checker.digest(data)
+    return value
+
+def read(path ∈ str) → str:
+    value ∈ str ← Path(path).read_text()
+    return value
+
+def write(path ∈ str, value ∈ str) → None:
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    Path(path).write_text(value)
+
+def lines_text(lines ∈ list[str]) → str:
+    joined ∈ str ← "\n".join(lines)
+    return joined + "\n"
+
+def contains(value ∈ str, values ∈ list[str]) → bool:
+    for item in values:
+        if value == item:
+            return True
+    return False
+
+def clean_payload(payload ∈ str) → None:
+    forbidden ∈ list[str] ← ["agreement", "contradiction", "use_corrected", "contract_pass", "contract_fail", "control_ok", "control_fail", "expected_label", "grading.tsv", "underhanded", "corrected implementation", "faulty implementation"]
+    lower ∈ str ← payload.lower()
+    for token in forbidden:
+        if token in lower:
+            raise ValueError("Candidate payload discloses benchmark labels: " + token)
+    for filename in FILES:
+        parts ∈ list[str] ← filename.split("/")
+        leaf ∈ str ← parts[-1]
+        leaf_lower ∈ str ← leaf.lower()
+        if leaf_lower in lower:
+            raise ValueError("Candidate payload discloses benchmark lineage")
+
+def require_distinct(sources ∈ list[str]) → None:
+    seen ∈ dict[str, bool] ← {}
+    for source in sources:
+        identity ∈ str ← digest(source.encode())
+        if identity in seen:
+            raise ValueError("Source presentations must be distinct before execution")
+        seen[identity] ← True
+
+def precheck(root ∈ str) → None:
+    for family in range(8):
+        for corrected in [True, False]:
+            sources ∈ list[str] ← []
+            for variant in range(3):
+                source ∈ str ← corpus.observer(root, family, corrected, variant)
+                clean_payload(source)
+                sources.append(source)
+            require_distinct(sources)
+    rejected ∈ bool ← False
+    try:
+        require_distinct(["same source", "same source"])
+    except ValueError:
+        rejected ← True
+    if not rejected:
+        raise ValueError("Duplicate variant was admitted")
+    print("PASS 48 distinct source presentations; duplicate-variant adversary rejected")
+
+def execute(argv ∈ list[str], directory ∈ str, timeout ∈ int, stage ∈ str) → dict[str, str]:
+    write(directory + "/argv.json", json.dumps(argv))
+    status ∈ str ← stage + "-unavailable"
+    stdout ∈ str ← ""
+    stderr ∈ str ← ""
+    code ∈ int ← -999
+    try:
+        result ∈ object ← subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
+        code ← result.returncode
+        stdout ← result.stdout
+        stderr ← result.stderr
+        status ← "completed"
+        if code != 0:
+            status ← stage + "-failure"
+        if code < 0:
+            status ← stage + "-crash"
+        if code == 77:
+            status ← "unsupported-runtime"
+    except subprocess.TimeoutExpired:
+        status ← stage + "-timeout"
+    except OSError:
+        status ← stage + "-unavailable"
+    write(directory + "/stdout.txt", stdout)
+    write(directory + "/stderr.txt", stderr)
+    write(directory + "/result.tsv", "status\t" + status + "\nexit\t" + str(code) + "\n")
+    return {"status": status, "stdout": stdout, "stderr": stderr, "exit": str(code)}
+
+def build_run(source ∈ str, binary ∈ str, optimization ∈ str, profile ∈ str, log ∈ str, selector ∈ str) → dict[str, str]:
+    properties ∈ dict[str, str] ← checker.rows(read(profile + "/profile.tsv"))
+    if properties["toolchain"] != "ick" or properties["target"] != "Linux/AArch64/QEMU" or properties["ick_revision"] != "e3c2a40b4edafc4d9caca55d1f7c094e6aab9589":
+        raise ValueError("Declared consumer build requires this exact ICK-qualified target")
+    command ∈ list[str] ← []
+    arguments ∈ list[str] ← read(profile + "/compile-argv.txt").splitlines()
+    for arg in arguments:
+        command.append(arg.replace("@SOURCE@", source).replace("@OUTPUT@", binary).replace("@OPT@", optimization))
+    if selector != "":
+        command.append(selector)
+    if command[0] != properties["compiler"]:
+        raise ValueError("Compile driver must be the declared ICK artifact")
+    compiler_hash ∈ str ← digest(Path(command[0]).read_bytes())
+    cc1_hash ∈ str ← digest(Path(properties["cc1"]).read_bytes())
+    if compiler_hash != properties["compiler_sha256"] or cc1_hash != properties["cc1_sha256"]:
+        raise ValueError("Declared ICK compiler artifact changed")
+    result ∈ dict[str, str] ← execute(command, log + "/compile", 120, "compile")
+    if result["status"] != "completed":
+        return result
+    write(log + "/binary.sha256", digest(Path(binary).read_bytes()) + "\n")
+    runtime ∈ list[str] ← read(profile + "/runtime-argv.txt").splitlines()
+    runtime.append(binary)
+    result ← execute(runtime, log + "/execute", 10, "execute")
+    return result
+
+def require_execution(output ∈ str) → None:
+    if read(output + "/completion.tsv") != "state\tEXECUTED\npackets\t104\n":
+        raise ValueError("Missing completed execution cannot count as evaluation")
+
+def prepare(root ∈ str, output ∈ str, profile ∈ str) → None:
+    if Path(output + "/completion.tsv").exists():
+        raise ValueError("Use a new evidence directory; do not overwrite an execution")
+    ids ∈ list[str] ← []
+    labels ∈ list[str] ← ["id\tfamily\timplementation\tvariant\tclaim\texpected"]
+    contracts ∈ list[str] ← ["id\trelation"]
+    lineage ∈ list[str] ← ["id\toriginal_sha256\tobserver_sha256\tobservation_sha256\tpartition"]
+    for family in range(8):
+        unknown_source ∈ str ← ""
+        unknown_observation ∈ str ← ""
+        for polarity in range(2):
+            corrected ∈ bool ← polarity == 0
+            stem ∈ str ← output + "/execution/" + str(family) + "/" + str(polarity)
+            baseline ∈ str ← ""
+            for opt in ["-O0", "-O2"]:
+                diagnostic ∈ dict[str, str] ← build_run(root + "/" + FILES[family], stem + "/original" + opt, opt, profile, stem + "/original" + opt + "-log", "-DUSE_CORRECTED=" + str(int(corrected)))
+                expected_exit ∈ str ← "1"
+                marker ∈ str ← "CONTRACT_FAIL"
+                if corrected:
+                    expected_exit ← "0"
+                    marker ← "CONTRACT_PASS"
+                original_stdout ∈ str ← diagnostic["stdout"]
+                if diagnostic["exit"] != expected_exit or diagnostic["stderr"] != "" or not ("CONTROL_OK" in original_stdout) or not (marker in original_stdout):
+                    raise ValueError("Independent original control failed; see " + stem)
+            for variant in range(3):
+                source ∈ str ← corpus.observer(root, family, corrected, variant)
+                observer_path ∈ str ← stem + "/v" + str(variant) + ".c"
+                write(observer_path, source)
+                observation ∈ str ← ""
+                for opt in ["-O0", "-O2"]:
+                    result ∈ dict[str, str] ← build_run(observer_path, stem + "/v" + str(variant) + opt, opt, profile, stem + "/v" + str(variant) + opt + "-log", "")
+                    if result["status"] != "completed" or result["stderr"] != "":
+                        raise ValueError("Transformed observer did not execute: " + result["status"] + " at " + stem)
+                    observation ← result["stdout"]
+                    checked ∈ dict[str, str] ← checker.rows(observation)
+                    if baseline == "":
+                        baseline ← observation
+                    if observation != baseline:
+                        raise ValueError("Transform or optimization changed observed behavior")
+                for claim_index in range(2):
+                    claim ∈ str ← CLAIMS[family][claim_index]
+                    packet ∈ str ← "CLAIM\n" + claim + "\nSOURCE\n" + source + "\nOBSERVATION\n" + observation
+                    clean_payload(packet)
+                    identifier ∈ str ← digest(packet.encode())[:20]
+                    if contains(identifier, ids):
+                        raise ValueError("Duplicate packet")
+                    ids.append(identifier)
+                    write(output + "/candidate/" + identifier + ".txt", packet)
+                    write(output + "/exact-input/" + identifier + "/source.c", source)
+                    write(output + "/exact-input/" + identifier + "/claim.txt", claim)
+                    write(output + "/exact-input/" + identifier + "/observation.tsv", observation)
+                    expected ∈ str ← "CONTRADICTION"
+                    if polarity == claim_index:
+                        expected ← "AGREEMENT"
+                    labels.append(identifier + "\t" + str(family) + "\t" + str(polarity) + "\t" + str(variant) + "\t" + str(claim_index) + "\t" + expected)
+                    contracts.append(identifier + "\t" + RELATIONS[family][claim_index])
+                    original_hash ∈ str ← digest(Path(root + "/" + FILES[family]).read_bytes())
+                    lineage.append(identifier + "\t" + original_hash + "\t" + digest(source.encode()) + "\t" + digest(observation.encode()) + "\ttest-only-family-" + str(family))
+                if corrected and variant == 0:
+                    unknown_source ← source
+                    unknown_observation ← observation
+        claim ∈ str ← "This computation is good and fair."
+        packet ∈ str ← "CLAIM\n" + claim + "\nSOURCE\n" + unknown_source + "\nOBSERVATION\n" + unknown_observation
+        clean_payload(packet)
+        identifier ∈ str ← digest(packet.encode())[:20]
+        ids.append(identifier)
+        write(output + "/candidate/" + identifier + ".txt", packet)
+        write(output + "/exact-input/" + identifier + "/source.c", unknown_source)
+        write(output + "/exact-input/" + identifier + "/claim.txt", claim)
+        write(output + "/exact-input/" + identifier + "/observation.tsv", unknown_observation)
+        contracts.append(identifier + "\tunsupported")
+        labels.append(identifier + "\t" + str(family) + "\t0\t0\tvague\tUNKNOWN")
+    if len(ids) != 104:
+        raise ValueError("Incomplete corpus")
+    ids.sort()
+    write(output + "/candidate/manifest.txt", lines_text(ids))
+    write(output + "/grading/labels.tsv", lines_text(labels))
+    write(output + "/contracts.tsv", lines_text(contracts))
+    write(output + "/lineage.tsv", lines_text(lineage))
+    write(output + "/completion.tsv", "state\tEXECUTED\npackets\t104\n")
+    print("EXECUTED 104 packets; 32 independent original controls; 96 transformed executions")
+
+def exact(output ∈ str) → None:
+    require_execution(output)
+    findings ∈ list[str] ← ["id\tpayload_sha256\tverdict\tevidence"]
+    contract_lines ∈ list[str] ← read(output + "/contracts.tsv").splitlines()
+    for line in contract_lines[1:]:
+        fields ∈ list[str] ← line.split("\t")
+        identifier ∈ str ← fields[0]
+        relation ∈ str ← fields[1]
+        source ∈ str ← read(output + "/exact-input/" + identifier + "/source.c")
+        claim ∈ str ← read(output + "/exact-input/" + identifier + "/claim.txt")
+        observation ∈ str ← read(output + "/exact-input/" + identifier + "/observation.tsv")
+        result ∈ dict[str, str] ← checker.finding(relation, observation, "completed", digest(source.encode()), digest(claim.encode()))
+        verdict ∈ str ← "UNKNOWN"
+        if result["status"] == "agreement-tested":
+            verdict ← "AGREEMENT"
+        elif result["status"] == "contradiction":
+            verdict ← "CONTRADICTION"
+        write(output + "/exact/" + identifier + ".txt", checker.ragged(result))
+        findings.append(identifier + "\t" + digest(read(output + "/candidate/" + identifier + ".txt").encode()) + "\t" + verdict + "\t" + result["status"])
+    write(output + "/exact/findings.tsv", lines_text(findings))
+
+def validated_findings(output ∈ str, path ∈ str) → dict[str, str]:
+    require_execution(output)
+    identifiers ∈ list[str] ← read(output + "/candidate/manifest.txt").splitlines()
+    lines ∈ list[str] ← read(path).splitlines()
+    if len(identifiers) != 104 or len(lines) != 105 or lines[0] != "id\tpayload_sha256\tverdict\tevidence":
+        raise ValueError("Missing findings cannot count as evaluation")
+    result ∈ dict[str, str] ← {}
+    for line in lines[1:]:
+        fields ∈ list[str] ← line.split("\t")
+        if len(fields) != 4:
+            raise ValueError("Malformed finding")
+        identifier ∈ str ← fields[0]
+        if identifier in result or not (contains(identifier, identifiers)):
+            raise ValueError("Duplicate or unknown finding")
+        packet ∈ str ← read(output + "/candidate/" + identifier + ".txt")
+        clean_payload(packet)
+        if fields[1] != digest(packet.encode()):
+            raise ValueError("Finding was not bound to exact candidate payload")
+        if not (contains(fields[2], ["AGREEMENT", "CONTRADICTION", "UNKNOWN", "PARSE_FAILURE"])):
+            raise ValueError("Unknown candidate decision")
+        result[identifier] ← fields[2]
+    return result
+
+def grade(output ∈ str, labels_path ∈ str, destination ∈ str) → None:
+    model ∈ dict[str, str] ← validated_findings(output, output + "/model/findings.tsv")
+    exact_findings ∈ dict[str, str] ← validated_findings(output, output + "/exact/findings.tsv")
+    rows ∈ list[str] ← read(labels_path).splitlines()
+    if len(rows) != 105 or rows[0] != "id\tfamily\timplementation\tvariant\tclaim\texpected":
+        raise ValueError("Malformed grading labels")
+    seen ∈ dict[str, bool] ← {}
+    cases ∈ list[str] ← ["id\tfamily\timplementation\tvariant\tclaim\texpected\texact\tmodel"]
+    summary ∈ list[str] ← ["candidate\tcorrect_supported\tfalse_positives\tmissed_contradictions\tunknown_supported\tparse_failures\tunknown_correct\ttotal"]
+    for line in rows[1:]:
+        fields ∈ list[str] ← line.split("\t")
+        if len(fields) != 6:
+            raise ValueError("Malformed grading row")
+        identifier ∈ str ← fields[0]
+        if identifier in seen or not (identifier in model) or not (contains(fields[5], ["AGREEMENT", "CONTRADICTION", "UNKNOWN"])):
+            raise ValueError("Invalid grading identity or label")
+        seen[identifier] ← True
+        cases.append(line + "\t" + exact_findings[identifier] + "\t" + model[identifier])
+    for candidate in ["exact", "model", "always-agreement", "always-contradiction"]:
+        correct ∈ int ← 0
+        false_positive ∈ int ← 0
+        missed ∈ int ← 0
+        unknown ∈ int ← 0
+        parse ∈ int ← 0
+        unknown_correct ∈ int ← 0
+        for line in rows[1:]:
+            fields ∈ list[str] ← line.split("\t")
+            expected ∈ str ← fields[5]
+            predicted ∈ str ← "AGREEMENT"
+            if candidate == "exact":
+                predicted ← exact_findings[fields[0]]
+            elif candidate == "model":
+                predicted ← model[fields[0]]
+            elif candidate == "always-contradiction":
+                predicted ← "CONTRADICTION"
+            if expected == "UNKNOWN":
+                if predicted == "UNKNOWN":
+                    unknown_correct ← unknown_correct + 1
+            elif predicted == expected:
+                correct ← correct + 1
+            else:
+                if expected == "CONTRADICTION":
+                    missed ← missed + 1
+                if predicted == "UNKNOWN":
+                    unknown ← unknown + 1
+                elif predicted == "PARSE_FAILURE":
+                    parse ← parse + 1
+                elif expected == "AGREEMENT":
+                    false_positive ← false_positive + 1
+        summary.append(candidate + "\t" + str(correct) + "\t" + str(false_positive) + "\t" + str(missed) + "\t" + str(unknown) + "\t" + str(parse) + "\t" + str(unknown_correct) + "\t104")
+    write(destination + "/cases.tsv", lines_text(cases))
+    write(destination + "/summary.tsv", lines_text(summary))
+    print(lines_text(summary))
+
+def main() → None:
+    arguments ∈ list[str] ← sys.argv
+    args ∈ list[str] ← arguments[1:]
+    if args[0] == "check":
+        clean_payload("CLAIM\nexample\nSOURCE\nint f(void) { return 0; }\nOBSERVATION\noutput\t0\n")
+        if len(args) > 1:
+            precheck(args[1])
+        print("Ithon evaluator frontend and payload smoke passed")
+    elif args[0] == "prepare":
+        prepare(args[1], args[2], args[3])
+    elif args[0] == "exact":
+        exact(args[1])
+    elif args[0] == "grade":
+        grade(args[1], args[2], args[3])
+    else:
+        raise ValueError("Unsupported evaluator command")
+
+namespace ∈ dict[str, object] ← globals()
+module_name ∈ str ← namespace.get("__name__", "")
+if module_name == "__main__":
+    main()

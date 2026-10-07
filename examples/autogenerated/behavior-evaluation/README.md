@@ -1,0 +1,11 @@
+# Reusable claim-versus-behavior pilot
+
+Read preregister.md for the fixed decision rule and attempt.md for ownership and the executable language route. The Ubuntu workflow runs the existing Flexible Pipes command pipeline against a pinned Cat Food ICK/QEMU profile. Claims and verdicts are deliberately distinct from observations and relation checking.
+
+Supported domain: the explicitly declared finite relations in checker.pi over supplied completed UTF-8 key/value observation rows. Integer/Boolean outputs, copied record fields, serialized redactions, macro widths, alias state, audit effect counts and independently observed unordered NaN are supported for these witnesses. Vague claims and other relations are unknown. Agreement means agreement within supplied observations only; no universal source correctness or arbitrary floating-point semantics is claimed.
+
+`checker.finding(relation, observation, execution, source_hash, claim_hash)` is reusable without the corpus or model. It returns contradiction plus the observed rows as witness, agreement-tested, unknown, or execution-failure, carrying separate source/claim/observation identities, producer, declared relation and tested scope. `checker.ragged` renders plain text with unequal observation lengths. The caller must justify the relation independently. The language model's name/claim interpretation is uncertain evidence even when an arithmetic relation is checked exactly. Candidate findings remain model-only-estimate.
+
+Input/effect capture: each observer copies pre-call inputs by value and captures post-call output/effects immediately without another call. The generic capture_once serializer retains independent strings around exactly one action invocation. Callback results that alias input are serialized before later mutation. The boundary adversaries check snapshots, disclosures, absent execution/findings, and grade-only label reversal.
+
+No candidate performance is claimed until a completed measured run is recorded. Original controls and transformed executions at both O0/O2 are required before inference. Exact findings are produced without the grading labels; the independent grader then reads already-produced findings. Full evidence artifacts retain source hashes, tool/dependency/model/tokenizer revisions, packet and prompt bytes, raw model outputs, per-case grades and baselines.
