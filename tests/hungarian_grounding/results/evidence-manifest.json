@@ -1,0 +1,760 @@
+{
+  "primary": {
+    "run": 37573723885,
+    "source": "fb90795f16e643d0a942cf73c6b5b4db7d395093",
+    "artifacts": [
+      {
+        "id": 11462010617,
+        "name": "rhs-grounding-codeberta-fb90795f16e643d0a942cf73c6b5b4db7d395093",
+        "size_in_bytes": 3836496,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462010617",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462010617/zip",
+        "expired": false,
+        "created_at": "2026-10-07T04:56:49Z",
+        "expires_at": "2027-01-05T04:54:41Z",
+        "updated_at": "2026-10-07T04:56:49Z",
+        "digest": "sha256:e852138fbcc6b1138031f2344438d464fecfdd170327c18ae046bb9282ced726",
+        "workflow_run": {
+          "id": 37573723885,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "fb90795f16e643d0a942cf73c6b5b4db7d395093"
+        }
+      },
+      {
+        "id": 11461892586,
+        "name": "rhs-grounding-minilm-fb90795f16e643d0a942cf73c6b5b4db7d395093",
+        "size_in_bytes": 1829039,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461892586",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461892586/zip",
+        "expired": false,
+        "created_at": "2026-10-07T04:56:53Z",
+        "expires_at": "2027-01-05T04:54:41Z",
+        "updated_at": "2026-10-07T04:56:53Z",
+        "digest": "sha256:8cd1e6536934238c272e9d5f45f250c89c50256fdd1923304b8ce0f4d4d6d218",
+        "workflow_run": {
+          "id": 37573723885,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "fb90795f16e643d0a942cf73c6b5b4db7d395093"
+        }
+      },
+      {
+        "id": 11461808187,
+        "name": "rhs-grounding-bert-uncased-fb90795f16e643d0a942cf73c6b5b4db7d395093",
+        "size_in_bytes": 3329220,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461808187",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461808187/zip",
+        "expired": false,
+        "created_at": "2026-10-07T04:56:48Z",
+        "expires_at": "2027-01-05T04:54:41Z",
+        "updated_at": "2026-10-07T04:56:48Z",
+        "digest": "sha256:66eeddc3b892bde05567426ee28a39af3bee1d70d7a1c0d3ad72c8cd9130f9e2",
+        "workflow_run": {
+          "id": 37573723885,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "fb90795f16e643d0a942cf73c6b5b4db7d395093"
+        }
+      },
+      {
+        "id": 11461424679,
+        "name": "rhs-grounding-bert-cased-fb90795f16e643d0a942cf73c6b5b4db7d395093",
+        "size_in_bytes": 3347050,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461424679",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461424679/zip",
+        "expired": false,
+        "created_at": "2026-10-07T04:56:49Z",
+        "expires_at": "2027-01-05T04:54:41Z",
+        "updated_at": "2026-10-07T04:56:49Z",
+        "digest": "sha256:bfb402d545488b7b47e57f8dece100032566a745cf4686755010c29a2d4c798e",
+        "workflow_run": {
+          "id": 37573723885,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "fb90795f16e643d0a942cf73c6b5b4db7d395093"
+        }
+      },
+      {
+        "id": 11460869284,
+        "name": "rhs-grounding-codebert-fb90795f16e643d0a942cf73c6b5b4db7d395093",
+        "size_in_bytes": 3778347,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11460869284",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11460869284/zip",
+        "expired": false,
+        "created_at": "2026-10-07T04:56:56Z",
+        "expires_at": "2027-01-05T04:54:41Z",
+        "updated_at": "2026-10-07T04:56:56Z",
+        "digest": "sha256:88da7abd88d550f6de75e6f9e36e2733df6cc397a4f29bed295487b86305b1e3",
+        "workflow_run": {
+          "id": 37573723885,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "fb90795f16e643d0a942cf73c6b5b4db7d395093"
+        }
+      }
+    ],
+    "per_model": [
+      {
+        "model": "codeberta",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "c6d8c1c19e214d25b692a2e8bc89b79fad0992f2c3fd5304c3b31deb8f6ba3bc",
+          "historical-rerun.json": "0cc76dd51b7df9fb1de5d48346c9317c0d48a2ec01896d2045c38e78f6d2cb24",
+          "model-config/config.json": "98ffffea3eb953e906cb021ff1a1ddaf0729b72c5eaed75657b3d6d300342185",
+          "model.json": "78b36ea8520962c14465ea9d79d74ee421d113b06a120d710a548fc4d4de693b",
+          "observations.jsonl": "4688079fea943e0f2b967d54e8025b6ff492c72fca72a5d89dfca2941eb4baf9",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stderr.bin": "c399a77011b1ebc538892a0a9ab359cf41ad961256eaeccda857aa4e6fe2226e",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stdout.bin": "6a342fdb91266c0020f0cd4f05fa4ae0bb3c161987b3b8c98f54ac6eb87cd6ed",
+          "pipeline/rhs-hungarian-grounding-37573723885/receipt.json": "3073da1d39c843d71edea19c699e495ae1319459f6a02ddf0a37b3d76c316927",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "0f4c76040baa29f76b497d169e4c0b9ee90b6a5731b684eb157d627d0d8f668b",
+          "tokenizer/tokenizer.json": "ec00901f3ca873eba66800dd0e1af6391558ae3ca959827ddbcc67d97c8bad42",
+          "tokenizer/tokenizer_config.json": "f9710295dfbb5e081ebbbf1a4710929f6b9ff8a576f76da283b2a6d02694bb32"
+        },
+        "case_tokens": {
+          "ABcD": {
+            "token_ids": [
+              0,
+              2319,
+              71,
+              40,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "AB",
+              "c",
+              "D",
+              "</s>"
+            ]
+          },
+          "ABcd": {
+            "token_ids": [
+              0,
+              2319,
+              3945,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "AB",
+              "cd",
+              "</s>"
+            ]
+          },
+          "aBcD": {
+            "token_ids": [
+              0,
+              69,
+              38,
+              71,
+              40,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "a",
+              "B",
+              "c",
+              "D",
+              "</s>"
+            ]
+          },
+          "aBcd": {
+            "token_ids": [
+              0,
+              69,
+              38,
+              3945,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "a",
+              "B",
+              "cd",
+              "</s>"
+            ]
+          }
+        }
+      },
+      {
+        "model": "codebert",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "c6d8c1c19e214d25b692a2e8bc89b79fad0992f2c3fd5304c3b31deb8f6ba3bc",
+          "historical-rerun.json": "61ccd2fbd5f23e38b2f2ed16ad6306159dd8c91213b7afb6ba28071f66bc7dba",
+          "model-config/config.json": "1347787151371ed76e88e0f921deb0eca2ca045e31d4f47d631a5fb71e694f2a",
+          "model.json": "e084f83c6435003e5470defa0b82eb45fb545b061dd67f9cbe42d4d700d3a0e5",
+          "observations.jsonl": "b75dc4d19a1f769a4d9fe4315b8c12a5c017ec18b33b6cd9dbff45f62e551df5",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stderr.bin": "0a5086f83e12a6574937db010c45667a0040ad7ed001193dfc0c19f348fa0f01",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stdout.bin": "2b7d0740c31a289ebacc2aa99ca6b0c239aa4c3b71ce99e8e87b0ea997de131f",
+          "pipeline/rhs-hungarian-grounding-37573723885/receipt.json": "d59aa17f3093c4b3233977be780b1c7faf6a96128de3d8c06307b621c663a2d4",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "61ece62643bc3a37aa2a3b67ae5eb1f00784f95b94c194bba4a6bd76c952fa18",
+          "tokenizer/tokenizer.json": "ca59632112d18bffd237dbfa1f5b5c35d92b30d0587165e473cea7f763d4ad62",
+          "tokenizer/tokenizer_config.json": "aa6a8a3f069d2d98c09444ee3f9671d64c29ce647473dccd78169b10c490d359"
+        },
+        "case_tokens": {
+          "ABcD": {
+            "token_ids": [
+              0,
+              4546,
+              438,
+              495,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "AB",
+              "c",
+              "D",
+              "</s>"
+            ]
+          },
+          "ABcd": {
+            "token_ids": [
+              0,
+              4546,
+              28690,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "AB",
+              "cd",
+              "</s>"
+            ]
+          },
+          "aBcD": {
+            "token_ids": [
+              0,
+              102,
+              387,
+              438,
+              495,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "a",
+              "B",
+              "c",
+              "D",
+              "</s>"
+            ]
+          },
+          "aBcd": {
+            "token_ids": [
+              0,
+              102,
+              387,
+              28690,
+              2
+            ],
+            "tokens": [
+              "<s>",
+              "a",
+              "B",
+              "cd",
+              "</s>"
+            ]
+          }
+        }
+      },
+      {
+        "model": "minilm",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "c6d8c1c19e214d25b692a2e8bc89b79fad0992f2c3fd5304c3b31deb8f6ba3bc",
+          "historical-rerun.json": "eb2bbf4bbbb76e42eca4fbde0debe454431a797f7304906fcb42cef52d7965bb",
+          "model-config/config.json": "bc07d616645604e14676245d40081ed4cb71e12817fb034d874a123576657924",
+          "model.json": "8dc3fb05c4af668fdb0770a256381657f12f2eab2e3d03b6cd45445235d59c3f",
+          "observations.jsonl": "4246c67ca5f436c21f33c5e45fbb5677781e2a77c6ca805566b15ea19c61c62e",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stderr.bin": "b3483fbf79fa15aee1050e77816857ddcd3f7c840c55e76e7434e1fb3121c736",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stdout.bin": "24b21d2505402216264351bbaa294bc2807e7cb608abdfefd6bdee9fcdf33eeb",
+          "pipeline/rhs-hungarian-grounding-37573723885/receipt.json": "803ddcc1f9fe7c1b5ab069f4e02283f6e396a0028db10974785d599106f5b9fd",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "18921a63b641fb2da2902fa2733a2ecf8b50715257f12465ae9da55c8276f7b8",
+          "tokenizer/tokenizer.json": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0",
+          "tokenizer/tokenizer_config.json": "872b6936be955bc3aea75ed599264d865626d68feede7e58b01e378e6332bd74"
+        },
+        "case_tokens": {
+          "ABcD": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          },
+          "ABcd": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          },
+          "aBcD": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          },
+          "aBcd": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          }
+        }
+      },
+      {
+        "model": "bert-cased",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "c6d8c1c19e214d25b692a2e8bc89b79fad0992f2c3fd5304c3b31deb8f6ba3bc",
+          "historical-rerun.json": "e2c4ea9f0ea176761cb3ec10a1e432ad92ab290528ba14b801ae06fb68de29a3",
+          "model-config/config.json": "585747a6f50d47edd7c03cacde2b92b62d311682f4fa23978b8337b40d899f3e",
+          "model.json": "d4e60d227b0df94703d6c731bf0c17054ae523665c57a750f340285baff9801d",
+          "observations.jsonl": "4e0e83869221747bca866ab8018577628397c0e73ce094aa3627aad969ecedb7",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stderr.bin": "fff1b77da9ff4fe5d8099b7aadc4b13538e6ac289e0803aefbde2050a304aab9",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stdout.bin": "58d81b74190d9406c39360cf85508c2eaaa49031c6009d24a3e7402a96d4e67b",
+          "pipeline/rhs-hungarian-grounding-37573723885/receipt.json": "a2c60f9453d3db9711efcb8dd3763dbd218ac6b04bc0297b87a826d8b7922973",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "37a75c5de951c209effb3cbdfc4834659913ab80c2e31938fad16fd88e53696f",
+          "tokenizer/tokenizer.json": "343989712a36cd8b253efeaf8baf6a08b9d2583f78e395e83832e8ee9f8d8ee1",
+          "tokenizer/tokenizer_config.json": "9cd988573a9588a6085cd353eeefa09b803dba75b03f58d0c1d302aad3078193"
+        },
+        "case_tokens": {
+          "ABcD": {
+            "token_ids": [
+              101,
+              16151,
+              1665,
+              2137,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "AB",
+              "##c",
+              "##D",
+              "[SEP]"
+            ]
+          },
+          "ABcd": {
+            "token_ids": [
+              101,
+              16151,
+              1665,
+              1181,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "AB",
+              "##c",
+              "##d",
+              "[SEP]"
+            ]
+          },
+          "aBcD": {
+            "token_ids": [
+              101,
+              170,
+              2064,
+              1665,
+              2137,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "a",
+              "##B",
+              "##c",
+              "##D",
+              "[SEP]"
+            ]
+          },
+          "aBcd": {
+            "token_ids": [
+              101,
+              170,
+              2064,
+              1665,
+              1181,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "a",
+              "##B",
+              "##c",
+              "##d",
+              "[SEP]"
+            ]
+          }
+        }
+      },
+      {
+        "model": "bert-uncased",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "c6d8c1c19e214d25b692a2e8bc89b79fad0992f2c3fd5304c3b31deb8f6ba3bc",
+          "historical-rerun.json": "cbd109920ffc868b577b1dfea6d59e2301d8c7d686bfd145fc9d186457df60f6",
+          "model-config/config.json": "323454129e3ee4ec6ea8a40500c4dfed3ad9b432831fc7366ba8c64fb258d20b",
+          "model.json": "3b73f104a066196c9d175960c376a492e342af807f77959dc19315947a79d20c",
+          "observations.jsonl": "ed406b5b2e725c863aafdf20904c896833600a9e8fdfcdbce3181d63bd51599e",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stderr.bin": "b81daeb426b5d68ecde597fd208cb4464c20e100b7e3411fb621926a5a32aaae",
+          "pipeline/rhs-hungarian-grounding-37573723885/01-checked-grease-experiment/stdout.bin": "0cde62239261b0c304f26fbf0c69dff8e3f5049fa89d5019e94b4ed713f91d26",
+          "pipeline/rhs-hungarian-grounding-37573723885/receipt.json": "485800c48d49ce9b051b45fdd1be3e4f511f53dcf50ba6439c850f270ad65c35",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "3272e193000f9a3d76ecda68bf0822d3a8cff2042a22c25265e6dba3ad1d4298",
+          "tokenizer/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+          "tokenizer/tokenizer_config.json": "e1c2a61a99bda00f6c55303a210b30e2f92dcf8b555e215812e2eb583e177ffd"
+        },
+        "case_tokens": {
+          "ABcD": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          },
+          "ABcd": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          },
+          "aBcD": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          },
+          "aBcd": {
+            "token_ids": [
+              101,
+              5925,
+              2094,
+              102
+            ],
+            "tokens": [
+              "[CLS]",
+              "abc",
+              "##d",
+              "[SEP]"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "repeat": {
+    "run": 37574547466,
+    "source": "5e03382f84fa14793a18dab6771b3fc968a711f2",
+    "artifacts": [
+      {
+        "id": 11462640136,
+        "name": "rhs-grounding-bert-uncased-5e03382f84fa14793a18dab6771b3fc968a711f2",
+        "size_in_bytes": 3334135,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462640136",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462640136/zip",
+        "expired": false,
+        "created_at": "2026-10-07T05:07:07Z",
+        "expires_at": "2027-01-05T05:04:47Z",
+        "updated_at": "2026-10-07T05:07:07Z",
+        "digest": "sha256:2688adc56ddf940fae024478670462b87e23ddbabfc092aebc94ebc72ab97d13",
+        "workflow_run": {
+          "id": 37574547466,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "5e03382f84fa14793a18dab6771b3fc968a711f2"
+        }
+      },
+      {
+        "id": 11462126409,
+        "name": "rhs-grounding-codeberta-5e03382f84fa14793a18dab6771b3fc968a711f2",
+        "size_in_bytes": 3841612,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462126409",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462126409/zip",
+        "expired": false,
+        "created_at": "2026-10-07T05:07:05Z",
+        "expires_at": "2027-01-05T05:04:47Z",
+        "updated_at": "2026-10-07T05:07:05Z",
+        "digest": "sha256:86d19f41aafd04e7883c407dbd460b81629bab0907cde0101d191240fc169ff3",
+        "workflow_run": {
+          "id": 37574547466,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "5e03382f84fa14793a18dab6771b3fc968a711f2"
+        }
+      },
+      {
+        "id": 11462101524,
+        "name": "rhs-grounding-bert-cased-5e03382f84fa14793a18dab6771b3fc968a711f2",
+        "size_in_bytes": 3351936,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462101524",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11462101524/zip",
+        "expired": false,
+        "created_at": "2026-10-07T05:07:05Z",
+        "expires_at": "2027-01-05T05:04:47Z",
+        "updated_at": "2026-10-07T05:07:05Z",
+        "digest": "sha256:055ae86ecbb2e721ff889c83a6d0268d9cd82b624d14b6f47572de2336743b32",
+        "workflow_run": {
+          "id": 37574547466,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "5e03382f84fa14793a18dab6771b3fc968a711f2"
+        }
+      },
+      {
+        "id": 11461829518,
+        "name": "rhs-grounding-codebert-5e03382f84fa14793a18dab6771b3fc968a711f2",
+        "size_in_bytes": 3783230,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461829518",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461829518/zip",
+        "expired": false,
+        "created_at": "2026-10-07T05:06:52Z",
+        "expires_at": "2027-01-05T05:04:47Z",
+        "updated_at": "2026-10-07T05:06:52Z",
+        "digest": "sha256:6cdb885ccdb47dc4f34018912af53bb0533f641c6dd0279729954aa54539bbd5",
+        "workflow_run": {
+          "id": 37574547466,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "5e03382f84fa14793a18dab6771b3fc968a711f2"
+        }
+      },
+      {
+        "id": 11461824495,
+        "name": "rhs-grounding-minilm-5e03382f84fa14793a18dab6771b3fc968a711f2",
+        "size_in_bytes": 1833990,
+        "url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461824495",
+        "archive_download_url": "https://api.github.com/repos/dilapidated-shed/rhs/actions/artifacts/11461824495/zip",
+        "expired": false,
+        "created_at": "2026-10-07T05:06:29Z",
+        "expires_at": "2027-01-05T05:04:47Z",
+        "updated_at": "2026-10-07T05:06:29Z",
+        "digest": "sha256:a8c648490e591b8dbfc2a56dad4095a62998bc40c374c276adea8e122ea0b06e",
+        "workflow_run": {
+          "id": 37574547466,
+          "repository_id": 1333425696,
+          "head_repository_id": 1333425696,
+          "head_branch": "sun/rhs-hungarian-grounding",
+          "head_sha": "5e03382f84fa14793a18dab6771b3fc968a711f2"
+        }
+      }
+    ],
+    "per_model": [
+      {
+        "model": "codeberta",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "91096db0688784958a76e891e75867f3385fbf250c6f819edb4c5ff50e1f9a95",
+          "historical-rerun.json": "0cc76dd51b7df9fb1de5d48346c9317c0d48a2ec01896d2045c38e78f6d2cb24",
+          "model-config/config.json": "98ffffea3eb953e906cb021ff1a1ddaf0729b72c5eaed75657b3d6d300342185",
+          "model.json": "72ffbca2c17c0a50925004af8db9a767885b39fb6a46a956a4c1706e4f3da956",
+          "observations.jsonl": "4688079fea943e0f2b967d54e8025b6ff492c72fca72a5d89dfca2941eb4baf9",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stderr.bin": "aa02e6aa4618f4c057514e50da9cfac4dc1e3fdc986f426dfd80c65b3354f195",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stdout.bin": "6a342fdb91266c0020f0cd4f05fa4ae0bb3c161987b3b8c98f54ac6eb87cd6ed",
+          "pipeline/rhs-hungarian-grounding-37574547466/receipt.json": "2137977a796448ce7daa93cb593f5312562dd6125fc61bbadf978f32e70490b9",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "0f4c76040baa29f76b497d169e4c0b9ee90b6a5731b684eb157d627d0d8f668b",
+          "tokenizer/tokenizer.json": "ec00901f3ca873eba66800dd0e1af6391558ae3ca959827ddbcc67d97c8bad42",
+          "tokenizer/tokenizer_config.json": "f9710295dfbb5e081ebbbf1a4710929f6b9ff8a576f76da283b2a6d02694bb32"
+        }
+      },
+      {
+        "model": "codebert",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "91096db0688784958a76e891e75867f3385fbf250c6f819edb4c5ff50e1f9a95",
+          "historical-rerun.json": "c0da17be4430c037774638ad91253e4d46d53034aee81416fe40be0cc10d2e81",
+          "model-config/config.json": "1347787151371ed76e88e0f921deb0eca2ca045e31d4f47d631a5fb71e694f2a",
+          "model.json": "431da6a8c52b94b081f08a8e160bfda646d3faa5abd1670d4f3e6ef487bde826",
+          "observations.jsonl": "95c481ce5e114351930e8d194e822b634bc42baa5871df7afd5d076ce521b8b3",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stderr.bin": "56b7d5c7b61d16d1e24d7146e55c7598c73087fc2e2729c6d69b1f6eb4f4d61d",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stdout.bin": "8a6fc14bfb749c9a53337aa12bc9cc0e0917d93ecc28b8a0be178ec64dfe0b67",
+          "pipeline/rhs-hungarian-grounding-37574547466/receipt.json": "3570a331ba1f612216e624ac2c637d83bbdb3590a153f4dca00aecb30536d8ad",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "13a18b0ef798c25eba3cf0dfc2dbceab60cf6bfe4d5a23070a354af5b5663a67",
+          "tokenizer/tokenizer.json": "ca59632112d18bffd237dbfa1f5b5c35d92b30d0587165e473cea7f763d4ad62",
+          "tokenizer/tokenizer_config.json": "aa6a8a3f069d2d98c09444ee3f9671d64c29ce647473dccd78169b10c490d359"
+        }
+      },
+      {
+        "model": "minilm",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "91096db0688784958a76e891e75867f3385fbf250c6f819edb4c5ff50e1f9a95",
+          "historical-rerun.json": "eb2bbf4bbbb76e42eca4fbde0debe454431a797f7304906fcb42cef52d7965bb",
+          "model-config/config.json": "bc07d616645604e14676245d40081ed4cb71e12817fb034d874a123576657924",
+          "model.json": "92a42e4aca4481124c97c7115116a889090afabfb0ea2350917e26d2446add45",
+          "observations.jsonl": "1d68f3fbb4ac76359d3553c3d753df5c95d7f8518abfd36bc4b4e4803353c301",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stderr.bin": "14006097dd665e5225a83d0a6c18ed42bab880f2f46b2e26268616ee06075683",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stdout.bin": "24b21d2505402216264351bbaa294bc2807e7cb608abdfefd6bdee9fcdf33eeb",
+          "pipeline/rhs-hungarian-grounding-37574547466/receipt.json": "87adc1a2117ed7a138a0c16776f9f5746a925d6e696678256808c065905cae0a",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "998ac957037abe43a44c08a99278c3df3ba8e5c7dc73cb89b020a9b74da92c87",
+          "tokenizer/tokenizer.json": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0",
+          "tokenizer/tokenizer_config.json": "872b6936be955bc3aea75ed599264d865626d68feede7e58b01e378e6332bd74"
+        }
+      },
+      {
+        "model": "bert-cased",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "91096db0688784958a76e891e75867f3385fbf250c6f819edb4c5ff50e1f9a95",
+          "historical-rerun.json": "e2c4ea9f0ea176761cb3ec10a1e432ad92ab290528ba14b801ae06fb68de29a3",
+          "model-config/config.json": "585747a6f50d47edd7c03cacde2b92b62d311682f4fa23978b8337b40d899f3e",
+          "model.json": "7faf3049e327c2c00d9276a796011f7dcfeabb44d5e769e4de8967408c5b77d3",
+          "observations.jsonl": "4e0e83869221747bca866ab8018577628397c0e73ce094aa3627aad969ecedb7",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stderr.bin": "2c965b66d70afd43fa7554090cd944edc785710553d5d2898569a55c8287d93b",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stdout.bin": "58d81b74190d9406c39360cf85508c2eaaa49031c6009d24a3e7402a96d4e67b",
+          "pipeline/rhs-hungarian-grounding-37574547466/receipt.json": "5d8b3235f5684a87925089fd79615bc25ad49ae43dae4518156d48788f64356e",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "37a75c5de951c209effb3cbdfc4834659913ab80c2e31938fad16fd88e53696f",
+          "tokenizer/tokenizer.json": "343989712a36cd8b253efeaf8baf6a08b9d2583f78e395e83832e8ee9f8d8ee1",
+          "tokenizer/tokenizer_config.json": "9cd988573a9588a6085cd353eeefa09b803dba75b03f58d0c1d302aad3078193"
+        }
+      },
+      {
+        "model": "bert-uncased",
+        "evidence_sha256": {
+          "cases.json": "2e21a25024a7317ce2a69f78d5a0a1b53e1fa13d6c132dd239a6a81d710338ee",
+          "checked.jsonl": "91096db0688784958a76e891e75867f3385fbf250c6f819edb4c5ff50e1f9a95",
+          "historical-rerun.json": "cbd109920ffc868b577b1dfea6d59e2301d8c7d686bfd145fc9d186457df60f6",
+          "model-config/config.json": "323454129e3ee4ec6ea8a40500c4dfed3ad9b432831fc7366ba8c64fb258d20b",
+          "model.json": "9daa9fb24884db0ab924ca40018fc49255f4eaf5bba6c3878c8a536d5160c8a9",
+          "observations.jsonl": "ed406b5b2e725c863aafdf20904c896833600a9e8fdfcdbce3181d63bd51599e",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stderr.bin": "4b04d5f05b0a6c4cab1f4ebb22ba35632c1e86b1f539e3cdbd7c04d14f81abd2",
+          "pipeline/rhs-hungarian-grounding-37574547466/01-checked-grease-experiment/stdout.bin": "0cde62239261b0c304f26fbf0c69dff8e3f5049fa89d5019e94b4ed713f91d26",
+          "pipeline/rhs-hungarian-grounding-37574547466/receipt.json": "750e21a1b483ebe772e07cb8c16fe86f57ae5819cf4209efab8e93a8f575472b",
+          "runtime.tsv": "76aa3c1a7746586c1606614176264ca4743550bbbebbede15c547694992ffa6b",
+          "scores.json": "3272e193000f9a3d76ecda68bf0822d3a8cff2042a22c25265e6dba3ad1d4298",
+          "tokenizer/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+          "tokenizer/tokenizer_config.json": "e1c2a61a99bda00f6c55303a210b30e2f92dcf8b555e215812e2eb583e177ffd"
+        }
+      }
+    ],
+    "comparisons": [
+      {
+        "model": "bert-uncased",
+        "primary": 0.5,
+        "agreement_correct": 79,
+        "summaries_match": true,
+        "edges_match": true,
+        "vectors_sha_match": true,
+        "scores_sha_match": true
+      },
+      {
+        "model": "codeberta",
+        "primary": 0.5,
+        "agreement_correct": 74,
+        "summaries_match": true,
+        "edges_match": true,
+        "vectors_sha_match": true,
+        "scores_sha_match": true
+      },
+      {
+        "model": "bert-cased",
+        "primary": 0.5,
+        "agreement_correct": 72,
+        "summaries_match": true,
+        "edges_match": true,
+        "vectors_sha_match": true,
+        "scores_sha_match": true
+      },
+      {
+        "model": "codebert",
+        "primary": 0.5,
+        "agreement_correct": 80,
+        "summaries_match": true,
+        "edges_match": true,
+        "vectors_sha_match": false,
+        "scores_sha_match": false
+      },
+      {
+        "model": "minilm",
+        "primary": 0.47916666666666663,
+        "agreement_correct": 72,
+        "summaries_match": true,
+        "edges_match": true,
+        "vectors_sha_match": false,
+        "scores_sha_match": false
+      }
+    ]
+  },
+  "protocol_sha256": "96dcdae13742807dbb25d7cf2254009c74c9fe3f31552793fdd427c0c4bcc385",
+  "provider_sha256": "da55766dc967af0ed97b877f8867409b8361aca478d3bad6adb2039ec2820880",
+  "preservation": {
+    "raw_expires_at": "2027-01-05",
+    "grease_expires_at": "2026-10-13",
+    "additional_archive": "BLOCKED: workspace disconnected; no durable copy confirmed"
+  }
+}
