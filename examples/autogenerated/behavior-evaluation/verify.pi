@@ -38,7 +38,7 @@ def check(output ∈ str) → None:
     incomplete ∈ dict[str, str] ← checker.finding("exchange/preserve-alias", "output\t1\n", "completed", "source", "claim")
     if unknown["status"] != "unknown" or incomplete["status"] != "unknown":
         raise ValueError("Unsupported claim or observation counted as agreement")
-    for leak in ["USE_CORRECTED", "CONTRACT_PASS", "CONTRACT_FAIL", "CONTROL_OK", "CONTROL_FAIL", "expected_label", "grading.tsv", "Underhanded", "corrected implementation", "faulty implementation", "01_xor_swap_alias.c"]:
+    for leak in ["AGREEMENT", "CONTRADICTION", "USE_CORRECTED", "CONTRACT_PASS", "CONTRACT_FAIL", "CONTROL_OK", "CONTROL_FAIL", "expected_label", "grading.tsv", "Underhanded", "corrected implementation", "faulty implementation", "01_xor_swap_alias.c"]:
         rejected ∈ bool ← False
         try:
             evaluate.clean_payload("CLAIM\n" + leak + "\n")
@@ -93,7 +93,7 @@ def check(output ∈ str) → None:
     alternate_fields ∈ list[str] ← alternate[1].split("\t")
     if normal_fields[1] != "96" or normal_fields[6] != "8" or alternate_fields[1] != "0":
         raise ValueError("Independent grading or exact declared checking failed")
-    evaluate.write(output + "/boundary-checks.tsv", "state\tPASS\nsnapshot_invocations\t1\nlabel_leaks_rejected\t11\nmissing_execution\trejected\nmissing_findings\trejected\ncandidate_findings_before\t" + before_model + "\ncandidate_findings_after\t" + after_model + "\nexact_findings_before\t" + before_exact + "\nexact_findings_after\t" + after_exact + "\ngrade_only_labels_reversed\t96\n")
+    evaluate.write(output + "/boundary-checks.tsv", "state\tPASS\nsnapshot_invocations\t1\nlabel_leaks_rejected\t13\nmissing_execution\trejected\nmissing_findings\trejected\ncandidate_findings_before\t" + before_model + "\ncandidate_findings_after\t" + after_model + "\nexact_findings_before\t" + before_exact + "\nexact_findings_after\t" + after_exact + "\ngrade_only_labels_reversed\t96\n")
     print("PASS snapshots, disclosure rejection, missing execution, independent grade-only mutation")
 
 def main() → None:

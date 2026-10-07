@@ -4,6 +4,9 @@ on:
   push:
     branches: [mean-what-you-say]
   workflow_dispatch:
+concurrency:
+  group: rhs-behavior-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   actions: read
