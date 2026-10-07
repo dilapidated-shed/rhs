@@ -44,7 +44,7 @@ def observer(root ∈ str, family ∈ int, corrected ∈ bool, variant ∈ int) 
         source ← re.sub(r"\bleft\b", "first_location", source)
         source ← re.sub(r"\bright\b", "second_location", source)
         source ← re.sub(r"\bprevious\b", "saved_value", source)
-        source ← source.replace("    ", "  ")
+        source ← "\n" + source.replace("    ", "  ")
     elif variant == 2:
         name ∈ str ← NAMES[family]
         source ← re.sub(r"\b" + name + r"\b", name + "_body", source)

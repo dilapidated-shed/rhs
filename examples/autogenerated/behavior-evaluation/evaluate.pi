@@ -46,6 +46,32 @@ def clean_payload(payload ∈ str) → None:
         if leaf_lower in lower:
             raise ValueError("Candidate payload discloses benchmark lineage")
 
+def require_distinct(sources ∈ list[str]) → None:
+    seen ∈ dict[str, bool] ← {}
+    for source in sources:
+        identity ∈ str ← digest(source.encode())
+        if identity in seen:
+            raise ValueError("Source presentations must be distinct before execution")
+        seen[identity] ← True
+
+def precheck(root ∈ str) → None:
+    for family in range(8):
+        for corrected in [True, False]:
+            sources ∈ list[str] ← []
+            for variant in range(3):
+                source ∈ str ← corpus.observer(root, family, corrected, variant)
+                clean_payload(source)
+                sources.append(source)
+            require_distinct(sources)
+    rejected ∈ bool ← False
+    try:
+        require_distinct(["same source", "same source"])
+    except ValueError:
+        rejected ← True
+    if not rejected:
+        raise ValueError("Duplicate variant was admitted")
+    print("PASS 48 distinct source presentations; duplicate-variant adversary rejected")
+
 def execute(argv ∈ list[str], directory ∈ str, timeout ∈ int, stage ∈ str) → dict[str, str]:
     write(directory + "/argv.json", json.dumps(argv))
     status ∈ str ← stage + "-unavailable"
@@ -287,6 +313,8 @@ def main() → None:
     args ∈ list[str] ← arguments[1:]
     if args[0] == "check":
         clean_payload("CLAIM\nexample\nSOURCE\nint f(void) { return 0; }\nOBSERVATION\noutput\t0\n")
+        if len(args) > 1:
+            precheck(args[1])
         print("Ithon evaluator frontend and payload smoke passed")
     elif args[0] == "prepare":
         prepare(args[1], args[2], args[3])
