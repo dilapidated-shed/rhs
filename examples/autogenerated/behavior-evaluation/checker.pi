@@ -1,0 +1,104 @@
+"""Finite declared relations and immutable, single-call observation capture."""
+import hashlib
+from typing import Callable
+from builtins import ValueError, KeyError, LookupError
+
+def digest(data ∈ bytes) → str:
+    result ∈ str ← hashlib.sha256(data).hexdigest()
+    return result
+
+def capture_once(value ∈ object, action ∈ Callable[[object], object], snapshot ∈ Callable[[object], str]) → dict[str, str]:
+    before ∈ str ← snapshot(value)
+    returned ∈ object ← action(value)
+    returned_snapshot ∈ str ← snapshot(returned)
+    after ∈ str ← snapshot(value)
+    return {"before": before, "returned": returned_snapshot, "after": after}
+
+def rows(text ∈ str) → dict[str, str]:
+    result ∈ dict[str, str] ← {}
+    for line in text.splitlines():
+        fields ∈ list[str] ← line.split("\t")
+        if len(fields) != 2:
+            raise ValueError("Observation requires exactly two tab-separated fields")
+        key ∈ str ← fields[0]
+        if key == "" or key in result:
+            raise ValueError("Observation requires unique nonempty keys")
+        result[key] ← fields[1]
+    return result
+
+def zeroes(width ∈ int) → str:
+    result ∈ str ← ""
+    for index in range(width):
+        result ← result + "0"
+    return result
+
+def holds(relation ∈ str, observation ∈ dict[str, str]) → bool:
+    if relation == "exchange/preserve-alias":
+        return observation["distinct.after.left"] == observation["distinct.before.right"] and observation["distinct.after.right"] == observation["distinct.before.left"] and observation["alias.after"] == observation["alias.before"]
+    if relation == "exchange/zero-alias":
+        return observation["distinct.after.left"] == observation["distinct.before.right"] and observation["distinct.after.right"] == observation["distinct.before.left"] and observation["alias.after"] == "0"
+    if relation == "width/equivalent":
+        return observation["width.first"] == observation["width.second"]
+    if relation == "width/context-dependent":
+        return observation["width.first"] != observation["width.second"]
+    if relation == "redaction/independent":
+        return observation["first.output"] == observation["second.output"]
+    if relation == "redaction/digit-width":
+        first ∈ str ← observation["first.output"]
+        second ∈ str ← observation["second.output"]
+        return first == zeroes(len(observation["first.input"])) and second == zeroes(len(observation["second.input"]))
+    if relation == "difference/boolean":
+        a ∈ int ← int(observation["input.contents"])
+        b ∈ int ← int(observation["input.location"])
+        return int(observation["output"]) == int(a != 0 and b != 0)
+    if relation == "difference/masks":
+        a ∈ int ← int(observation["input.contents"])
+        b ∈ int ← int(observation["input.location"])
+        return int(observation["output"]) == (a & b)
+    if relation == "copy/state":
+        return observation["after.id"] == observation["source.id"] and observation["after.distance"] == observation["source.distance"]
+    if relation == "copy/equal-id-skip":
+        return observation["after.id"] == observation["before.id"] and observation["after.distance"] == observation["before.distance"]
+    if relation == "audit/once":
+        return int(observation["audit.after"]) - int(observation["audit.before"]) == 1
+    if relation == "audit/per-divisor":
+        year ∈ int ← int(observation["input.year"])
+        count ∈ int ← 3
+        if year % 4 != 0:
+            count ← 1
+        elif year % 100 != 0:
+            count ← 2
+        return int(observation["audit.after"]) - int(observation["audit.before"]) == count
+    if relation == "score/finite":
+        if observation["input.score"] != "nan" or observation["input.unordered"] != "1":
+            raise ValueError("This checker supports only independently observed unordered NaN")
+        return observation["output"] == "0"
+    if relation == "score/lower-bound-only":
+        if observation["input.score"] != "nan" or observation["input.unordered"] != "1":
+            raise ValueError("This checker supports only independently observed unordered NaN")
+        return observation["output"] == "1"
+    if relation == "count/nonnegative":
+        return int(observation["output"]) == int(int(observation["input.count"]) >= 0)
+    if relation == "count/accept-all":
+        return observation["output"] == "1"
+    raise LookupError("Unsupported independently declared relation")
+
+def finding(relation ∈ str, observation ∈ str, execution ∈ str, source_hash ∈ str, claim_hash ∈ str) → dict[str, str]:
+    result ∈ dict[str, str] ← {"producer": "rhs-observed-relations-v1", "source": source_hash, "claim": claim_hash, "observation": digest(observation.encode()), "relation": relation, "scope": "supplied completed observation only", "status": "execution-failure", "witness": execution}
+    if execution != "completed":
+        return result
+    try:
+        satisfied ∈ bool ← holds(relation, rows(observation))
+    except (LookupError, ValueError, KeyError):
+        result["status"] ← "unknown"
+        result["witness"] ← "unsupported relation or incomplete observation"
+        return result
+    result["status"] ← "agreement-tested"
+    result["witness"] ← ""
+    if not satisfied:
+        result["status"] ← "contradiction"
+        result["witness"] ← observation
+    return result
+
+def ragged(result ∈ dict[str, str]) → str:
+    return "𝕽 finding\n" + result["status"] + "\n𝕊 source\n" + result["source"] + "\n𝕮 claim\n" + result["claim"] + "\n𝕆 observation\n" + result["observation"] + "\n𝕻 producer\n" + result["producer"] + "\n𝕃 relation\n" + result["relation"] + "\n𝕂 scope\n" + result["scope"] + "\n𝕎 witness\n" + result["witness"] + "\n"

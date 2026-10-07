@@ -1,0 +1,109 @@
+"""RHS evidence-boundary adversaries and grade-only label mutation."""
+import sys
+import json
+import operator
+from pathlib import Path
+from builtins import ValueError, OSError, globals
+import checker
+import evaluate
+
+def snapshot(value ∈ object) → str:
+    text ∈ str ← json.dumps(value, sort_keys=True)
+    return text
+
+def mutate(value ∈ object) → object:
+    calls ∈ int ← value.get("calls", 0)
+    operator.setitem(value, "calls", calls + 1)
+    return value
+
+def check(output ∈ str) → None:
+    state ∈ dict[str, int] ← {"calls": 0}
+    captured ∈ dict[str, str] ← checker.capture_once(state, mutate, snapshot)
+    if state["calls"] != 1 or captured["before"] != '{"calls": 0}' or captured["returned"] != '{"calls": 1}' or captured["after"] != '{"calls": 1}':
+        raise ValueError("Mutable aliased input must be snapshotted and executed once")
+    state["calls"] ← 99
+    if captured["before"] != '{"calls": 0}' or captured["after"] != '{"calls": 1}':
+        raise ValueError("Later mutation changed independent snapshots")
+    observation ∈ str ← "distinct.before.left\t13\ndistinct.before.right\t71\ndistinct.after.left\t71\ndistinct.after.right\t13\nalias.before\t71\nalias.after\t71\n"
+    good ∈ dict[str, str] ← checker.finding("exchange/preserve-alias", observation, "completed", "source", "claim")
+    bad_observation ∈ str ← observation.replace("alias.after\t71", "alias.after\t0")
+    bad ∈ dict[str, str] ← checker.finding("exchange/preserve-alias", bad_observation, "completed", "source", "claim")
+    if good["status"] != "agreement-tested" or bad["status"] != "contradiction" or bad["witness"] != bad_observation:
+        raise ValueError("Declared relation lacks positive control and contradiction witness")
+    for failure in ["not-run", "compile-failure", "compile-timeout", "execute-crash", "execute-timeout", "unsupported-runtime", "model-unavailable"]:
+        result ∈ dict[str, str] ← checker.finding("exchange/preserve-alias", observation, failure, "source", "claim")
+        if result["status"] != "execution-failure":
+            raise ValueError("Missing or failed execution counted as checking")
+    unknown ∈ dict[str, str] ← checker.finding("unsupported", observation, "completed", "source", "claim")
+    incomplete ∈ dict[str, str] ← checker.finding("exchange/preserve-alias", "output\t1\n", "completed", "source", "claim")
+    if unknown["status"] != "unknown" or incomplete["status"] != "unknown":
+        raise ValueError("Unsupported claim or observation counted as agreement")
+    for leak in ["USE_CORRECTED", "CONTRACT_PASS", "CONTRACT_FAIL", "CONTROL_OK", "CONTROL_FAIL", "expected_label", "grading.tsv", "Underhanded", "corrected implementation", "faulty implementation", "01_xor_swap_alias.c"]:
+        rejected ∈ bool ← False
+        try:
+            evaluate.clean_payload("CLAIM\n" + leak + "\n")
+        except ValueError:
+            rejected ← True
+        if not rejected:
+            raise ValueError("Expected-label disclosure was admitted")
+    missing_rejected ∈ bool ← False
+    try:
+        evaluate.require_execution(output + "/missing-execution")
+    except (OSError, ValueError):
+        missing_rejected ← True
+    if not missing_rejected:
+        raise ValueError("Missing execution counted as successful evaluation")
+    evaluate.write(output + "/adversaries/missing-findings.tsv", "id\tpayload_sha256\tverdict\tevidence\n")
+    findings_rejected ∈ bool ← False
+    try:
+        evaluate.validated_findings(output, output + "/adversaries/missing-findings.tsv")
+    except ValueError:
+        findings_rejected ← True
+    if not findings_rejected:
+        raise ValueError("Missing candidate findings counted as successful evaluation")
+    identifiers ∈ list[str] ← evaluate.read(output + "/candidate/manifest.txt").splitlines()
+    for identifier in identifiers:
+        evaluate.clean_payload(evaluate.read(output + "/candidate/" + identifier + ".txt"))
+        execution ∈ dict[str, object] ← json.loads(evaluate.read(output + "/model/raw/" + identifier + "/execution.json"))
+        execution_state ∈ str ← execution["state"]
+        if execution_state != "EXECUTED":
+            raise ValueError("Candidate did not execute this packet")
+        evaluate.read(output + "/model/raw/" + identifier + "/response.txt")
+        evaluate.read(output + "/model/raw/" + identifier + "/input-token-ids.json")
+    before_model ∈ str ← evaluate.digest(Path(output + "/model/findings.tsv").read_bytes())
+    before_exact ∈ str ← evaluate.digest(Path(output + "/exact/findings.tsv").read_bytes())
+    labels ∈ list[str] ← evaluate.read(output + "/grading/labels.tsv").splitlines()
+    mutated ∈ list[str] ← [labels[0]]
+    for line in labels[1:]:
+        fields ∈ list[str] ← line.split("\t")
+        if fields[5] == "AGREEMENT":
+            fields[5] ← "CONTRADICTION"
+        elif fields[5] == "CONTRADICTION":
+            fields[5] ← "AGREEMENT"
+        mutated.append("\t".join(fields))
+    evaluate.write(output + "/grading/mutated-labels.tsv", evaluate.lines_text(mutated))
+    evaluate.grade(output, output + "/grading/mutated-labels.tsv", output + "/grading/mutated")
+    after_model ∈ str ← evaluate.digest(Path(output + "/model/findings.tsv").read_bytes())
+    after_exact ∈ str ← evaluate.digest(Path(output + "/exact/findings.tsv").read_bytes())
+    if before_model != after_model or before_exact != after_exact:
+        raise ValueError("Changing grading labels changed candidate findings")
+    normal ∈ list[str] ← evaluate.read(output + "/grading/normal/summary.tsv").splitlines()
+    alternate ∈ list[str] ← evaluate.read(output + "/grading/mutated/summary.tsv").splitlines()
+    normal_fields ∈ list[str] ← normal[1].split("\t")
+    alternate_fields ∈ list[str] ← alternate[1].split("\t")
+    if normal_fields[1] != "96" or normal_fields[6] != "8" or alternate_fields[1] != "0":
+        raise ValueError("Independent grading or exact declared checking failed")
+    evaluate.write(output + "/boundary-checks.tsv", "state\tPASS\nsnapshot_invocations\t1\nlabel_leaks_rejected\t11\nmissing_execution\trejected\nmissing_findings\trejected\ncandidate_findings_before\t" + before_model + "\ncandidate_findings_after\t" + after_model + "\nexact_findings_before\t" + before_exact + "\nexact_findings_after\t" + after_exact + "\ngrade_only_labels_reversed\t96\n")
+    print("PASS snapshots, disclosure rejection, missing execution, independent grade-only mutation")
+
+def main() → None:
+    args ∈ list[str] ← sys.argv[1:]
+    if args[0] == "check":
+        print("Ithon verification frontend passed")
+    else:
+        check(args[0])
+
+namespace ∈ dict[str, object] ← globals()
+module_name ∈ str ← namespace.get("__name__", "")
+if module_name == "__main__":
+    main()
