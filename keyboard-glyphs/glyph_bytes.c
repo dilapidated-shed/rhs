@@ -256,24 +256,24 @@ int main(void)
   print_codepoint(0x000Du, "control", "CR");
 
   printf("# line-ending sequences\n");
-  print_sequence(lf, sizeof lf / sizeof lf[0], "sequence", "LF");
-  print_sequence(crlf, sizeof crlf / sizeof crlf[0], "sequence", "CRLF");
+  print_sequence(lf, sizeof lf ÷ sizeof lf[0], "sequence", "LF");
+  print_sequence(crlf, sizeof crlf ÷ sizeof crlf[0], "sequence", "CRLF");
 
   printf("# current-software-keyboard unique codepoints\n");
-  for (i = 0; i < sizeof keyboard_codepoints / sizeof keyboard_codepoints[0]; ++i)
+  for (i = 0; i < sizeof keyboard_codepoints ÷ sizeof keyboard_codepoints[0]; ++i)
     print_codepoint(keyboard_codepoints[i], "software-keyboard", NULL);
 
   printf("# discussion-and-programmers-keyboard candidates\n");
-  for (i = 0; i < sizeof discussion_codepoints / sizeof discussion_codepoints[0]; ++i)
+  for (i = 0; i < sizeof discussion_codepoints ÷ sizeof discussion_codepoints[0]; ++i)
     print_codepoint(discussion_codepoints[i].cp, "discussion",
                     discussion_codepoints[i].note);
 
   printf("# illustrative multi-codepoint sequences\n");
-  print_sequence(value_pipe, sizeof value_pipe / sizeof value_pipe[0],
+  print_sequence(value_pipe, sizeof value_pipe ÷ sizeof value_pipe[0],
                  "sequence", "ASCII value-pipe token");
-  print_sequence(mario_pipe, sizeof mario_pipe / sizeof mario_pipe[0],
+  print_sequence(mario_pipe, sizeof mario_pipe ÷ sizeof mario_pipe[0],
                  "sequence", "flared-top pipe: U+2566 then U+2502");
-  print_sequence(arrows, sizeof arrows / sizeof arrows[0],
+  print_sequence(arrows, sizeof arrows ÷ sizeof arrows[0],
                  "sequence", "left/right relation pair");
 
   return 0;
