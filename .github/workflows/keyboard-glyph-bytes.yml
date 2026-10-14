@@ -1,0 +1,85 @@
+name: Keyboard glyph byte identity
+on:
+  pull_request:
+  push:
+    branches: [mean-what-you-say]
+permissions:
+  contents: read
+jobs:
+  glyph-bytes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: dilapidated-shed/rhs
+          ref: 09398b1eb4f3143b12cd6149ba0cb11fc22f7f07
+          path: .rhs-glyph-baseline
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: dilapidated-shed/ithon
+          ref: d6e83969f82512e920fb17b44326cb54f31d015c
+          path: .glyph-work/ithon
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/catfood
+          ref: 90471095201bcabeb7ef920fa0101f4e667d1454
+          path: .glyph-work/catfood
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/ai-ci
+          ref: a9aa38707c15f2909a40f226621dadf04010d7d9
+          path: .glyph-work/ai-ci
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/kitchen
+          ref: 3280a9f370d91298f959ffe0d367773ad74c799b
+          path: .glyph-work/kitchen
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/flexible-pipes
+          ref: d88e90371f51254fb68a5d9128e5238c0b448de0
+          path: .glyph-work/flexible-pipes
+          persist-credentials: false
+      - name: Qualified maintained C compiler
+        id: ick
+        uses: isomorphisms/ai-ci/ick-host@c789bb621ca9c5fb1a9bec07eb95cc670efb65f7
+      - name: Rebuild and compare the original byte fixture
+        env:
+          ICK: ${{ steps.ick.outputs.compiler }}
+          ICK_LINK_FLAGS: ${{ steps.ick.outputs.link_flags }}
+        run: make -C keyboard-glyphs check ICK="$ICK" ICK_LINK_FLAGS="$ICK_LINK_FLAGS"
+      - name: Independent baseline and migration acceptance through FP and Kitchen
+        env:
+          ICK: ${{ steps.ick.outputs.compiler }}
+          ICK_SOURCE_ROOT: ${{ github.workspace }}/.ick-host-source
+        shell: /home/runner/work/rhs/rhs/.glyph-work/ithon/ithon /home/runner/work/rhs/rhs/keyboard-glyphs/ci.pi {0}
+        run: /home/runner/work/rhs/rhs
+      - name: Preserve exact observed bytes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: keyboard-glyph-bytes-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            keyboard-glyphs/glyph_bytes
+            keyboard-glyphs/glyph_bytes.actual.txt
+            keyboard-glyphs/glyph_bytes.expected.txt
+            .glyph-work/evidence
+            .glyph-work/profile
+            .glyph-work/provision
+            .glyph-work/pipeline-runs
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 90
+
