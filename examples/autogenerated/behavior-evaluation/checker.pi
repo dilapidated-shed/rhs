@@ -2,6 +2,7 @@
 import hashlib
 from typing import Callable
 from builtins import ValueError, KeyError, LookupError
+import relations
 
 def digest(data ∈ bytes) → str:
     result ∈ str ← hashlib.sha256(data).hexdigest()
@@ -82,7 +83,8 @@ def holds(relation ∈ str, observation ∈ dict[str, str]) → bool:
         return int(observation["output"]) == int(int(observation["input.count"]) >= 0)
     if relation == "count/accept-all":
         return observation["output"] == "1"
-    raise LookupError("Unsupported independently declared relation")
+    checked ∈ bool ← relations.holds(relation, observation)
+    return checked
 
 def finding(relation ∈ str, observation ∈ str, execution ∈ str, source_hash ∈ str, claim_hash ∈ str) → dict[str, str]:
     result ∈ dict[str, str] ← {"producer": "rhs-observed-relations-v1", "source": source_hash, "claim": claim_hash, "observation": digest(observation.encode()), "relation": relation, "scope": "supplied completed observation only", "status": "execution-failure", "witness": execution}

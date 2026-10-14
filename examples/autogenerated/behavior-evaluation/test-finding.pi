@@ -1,0 +1,24 @@
+"""Nominal value and tag controls; no evidence acceptance is claimed here."""
+import finding
+from builtins import ValueError
+
+source ∈ finding.SourceIdentity ← finding.SourceIdentity("dilapidated-shed/rhs", "source", "source.c", "hash")
+claim ∈ finding.ClaimIdentity ← finding.ClaimIdentity("claim", "hash")
+behavior ∈ finding.ObservedBehavior ← finding.ObservedBehavior("utf8-tsv", "hash")
+scope ∈ finding.ExecutionScope ← finding.ExecutionScope("Ubuntu/x86_64", "native-process", "case", "supplied-native-observation")
+hashes ∈ finding.EvidenceHashes ← finding.EvidenceHashes("hash", "hash", "hash", "hash")
+exact ∈ finding.ExactFinding ← finding.ExactFinding(source, claim, behavior, scope, hashes, "relation", "contradiction", 10, 20)
+model ∈ finding.ModelFinding ← finding.ModelFinding(source, claim, behavior, scope, hashes, "revision", "hash", "hash", "contradiction-estimated", 10, 20)
+exact_record ∈ dict[str, str] ← finding.exact_fields(exact)
+model_record ∈ dict[str, str] ← finding.model_fields(model)
+if exact_record["evidence.kind"] != "exact-observed" or model_record["evidence.kind"] != "model-estimated":
+    raise ValueError("Evidence kinds were conflated")
+bad ∈ finding.ModelFinding ← finding.ModelFinding(source, claim, behavior, scope, hashes, "revision", "hash", "hash", "contradiction", 10, 20)
+rejected ∈ bool ← False
+try:
+    finding.model_fields(bad)
+except ValueError:
+    rejected ← True
+if not rejected:
+    raise ValueError("Model serializer promoted an estimate to exact evidence")
+print("PASS immutable typed finding and model-promotion controls; provenance acceptance not claimed")

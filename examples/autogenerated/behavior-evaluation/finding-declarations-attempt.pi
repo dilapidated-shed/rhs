@@ -1,0 +1,102 @@
+"""Immutable typed finding values; acceptance belongs to independent AI-CI."""
+from typing import NamedTuple
+from builtins import ValueError
+
+class SourceIdentity(NamedTuple):
+    repository ∈ str
+    commit ∈ str
+    path ∈ str
+    sha256 ∈ str
+
+class ClaimIdentity(NamedTuple):
+    identifier ∈ str
+    sha256 ∈ str
+
+class ObservedBehavior(NamedTuple):
+    encoding ∈ str
+    sha256 ∈ str
+
+class ExecutionScope(NamedTuple):
+    target ∈ str
+    actor ∈ str
+    execution_id ∈ str
+    boundary ∈ str
+
+class EvidenceHashes(NamedTuple):
+    binary ∈ str
+    stdout ∈ str
+    stderr ∈ str
+    execution ∈ str
+
+class ExactFinding(NamedTuple):
+    source ∈ SourceIdentity
+    claim ∈ ClaimIdentity
+    behavior ∈ ObservedBehavior
+    scope ∈ ExecutionScope
+    hashes ∈ EvidenceHashes
+    relation ∈ str
+    status ∈ str
+    created_epoch ∈ int
+    expires_epoch ∈ int
+
+class ModelFinding(NamedTuple):
+    source ∈ SourceIdentity
+    claim ∈ ClaimIdentity
+    behavior ∈ ObservedBehavior
+    scope ∈ ExecutionScope
+    hashes ∈ EvidenceHashes
+    model_revision ∈ str
+    prompt_sha256 ∈ str
+    response_sha256 ∈ str
+    status ∈ str
+    created_epoch ∈ int
+    expires_epoch ∈ int
+
+def common(source ∈ SourceIdentity, claim ∈ ClaimIdentity, behavior ∈ ObservedBehavior, scope ∈ ExecutionScope, hashes ∈ EvidenceHashes, created ∈ int, expires ∈ int) → dict[str, str]:
+    fields ∈ dict[str, str] ← {"schema": "rhs-finding-v1", "source.repository": source.repository, "source.commit": source.commit, "source.path": source.path, "source.sha256": source.sha256, "claim.id": claim.identifier, "claim.sha256": claim.sha256, "observation.encoding": behavior.encoding, "observation.sha256": behavior.sha256, "execution.target": scope.target, "execution.actor": scope.actor, "execution.id": scope.execution_id, "execution.scope": scope.boundary, "binary.sha256": hashes.binary, "stdout.sha256": hashes.stdout, "stderr.sha256": hashes.stderr, "execution.sha256": hashes.execution, "created_epoch": str(created), "expires_epoch": str(expires)}
+    return fields
+
+def exact_fields(value ∈ ExactFinding) → dict[str, str]:
+    source ∈ SourceIdentity ← value.source
+    claim ∈ ClaimIdentity ← value.claim
+    behavior ∈ ObservedBehavior ← value.behavior
+    scope ∈ ExecutionScope ← value.scope
+    hashes ∈ EvidenceHashes ← value.hashes
+    created ∈ int ← value.created_epoch
+    expires ∈ int ← value.expires_epoch
+    status ∈ str ← value.status
+    relation ∈ str ← value.relation
+    if not (status in ["agreement-tested", "contradiction", "unknown", "execution-failure"]):
+        raise ValueError("Invalid exact finding status")
+    fields ∈ dict[str, str] ← common(source, claim, behavior, scope, hashes, created, expires)
+    fields["evidence.kind"] ← "exact-observed"
+    fields["status"] ← status
+    fields["relation"] ← relation
+    return fields
+
+def model_fields(value ∈ ModelFinding) → dict[str, str]:
+    source ∈ SourceIdentity ← value.source
+    claim ∈ ClaimIdentity ← value.claim
+    behavior ∈ ObservedBehavior ← value.behavior
+    scope ∈ ExecutionScope ← value.scope
+    hashes ∈ EvidenceHashes ← value.hashes
+    created ∈ int ← value.created_epoch
+    expires ∈ int ← value.expires_epoch
+    status ∈ str ← value.status
+    if not (status in ["agreement-estimated", "contradiction-estimated", "unknown", "execution-failure", "parse-failure"]):
+        raise ValueError("Model inference cannot emit an exact finding status")
+    fields ∈ dict[str, str] ← common(source, claim, behavior, scope, hashes, created, expires)
+    fields["evidence.kind"] ← "model-estimated"
+    fields["status"] ← status
+    fields["model.revision"] ← value.model_revision
+    fields["prompt.sha256"] ← value.prompt_sha256
+    fields["response.sha256"] ← value.response_sha256
+    return fields
+
+def serialize(fields ∈ dict[str, str]) → str:
+    lines ∈ list[str] ← []
+    for key in fields:
+        if "\t" in fields[key] or "\n" in fields[key] or "\t" in key or "\n" in key:
+            raise ValueError("Finding scalar fields cannot contain tabs or newlines")
+        lines.append(key + "\t" + fields[key])
+    return str("\n".join(lines)) + "\n"
