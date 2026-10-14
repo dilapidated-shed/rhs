@@ -1,0 +1,101 @@
+"""Hosted source-bound comparison; Cat Food runtimes, FP/Kitchen execution."""
+import sys
+import os
+import json
+import hashlib
+import subprocess
+import zipfile
+import time
+from pathlib import Path
+from builtins import ValueError, globals, list
+
+ARCHIVE ∈ str ← "939159345e80e82f90493f2a78de68983a544e1498b104dfdb19e6a2092a03f4"
+
+def digest(data ∈ bytes) → str:
+    result ∈ str ← hashlib.sha256(data).hexdigest()
+    return result
+
+def run(argv ∈ list[str], root ∈ str, log ∈ str) → bytes:
+    Path(log).mkdir(parents=True, exist_ok=False)
+    Path(log + "/argv.txt").write_text(str("\n".join(argv)) + "\n")
+    result ∈ object ← subprocess.run(argv, cwd=root, capture_output=True)
+    Path(log + "/stdout.bin").write_bytes(result.stdout)
+    Path(log + "/stderr.bin").write_bytes(result.stderr)
+    code ∈ int ← result.returncode
+    Path(log + "/exit.txt").write_text(str(code) + "\n")
+    if code != 0:
+        print(result.stderr.decode(errors="replace"))
+        raise ValueError("Required comparison stage failed: " + argv[0])
+    stdout ∈ bytes ← result.stdout
+    return stdout
+
+def manifest(directory ∈ str) → None:
+    lines ∈ list[str] ← ["path\tsha256"]
+    paths ∈ list[Path] ← list(Path(directory).rglob("*"))
+    for path in paths:
+        if path.is_file():
+            relative ∈ str ← str(path.relative_to(directory))
+            if relative != "hashes.tsv":
+                lines.append(relative + "\t" + digest(path.read_bytes()))
+    Path(directory + "/hashes.tsv").write_text(str("\n".join(lines)) + "\n")
+
+def main() → None:
+    arguments ∈ list[str] ← sys.argv
+    parameters ∈ list[str] ← Path(arguments[1]).read_text().splitlines()
+    if len(parameters) != 3:
+        raise ValueError("Comparison requires root/model/presentation")
+    root ∈ str ← parameters[0]
+    model ∈ str ← parameters[1]
+    presentation ∈ str ← parameters[2]
+    if root != "/home/runner/work/rhs/rhs":
+        raise ValueError("Comparison requires the observed GitHub RHS workspace")
+    work ∈ str ← root + "/.detector-work"
+    pins ∈ dict[str, str] ← {"ithon": "d6e83969f82512e920fb17b44326cb54f31d015c", "catfood": "90471095201bcabeb7ef920fa0101f4e667d1454", "ai-ci": "a9aa38707c15f2909a40f226621dadf04010d7d9", "kitchen": "3280a9f370d91298f959ffe0d367773ad74c799b", "flexible-pipes": "71fddb2d1ac36bcde35f678ea52030bedd3fb51f"}
+    for owner in pins:
+        result ∈ object ← subprocess.run(["git", "rev-parse", "HEAD"], cwd=work + "/" + owner, capture_output=True, text=True, check=True)
+        observed ∈ str ← result.stdout.strip()
+        if observed != pins[owner]:
+            raise ValueError("Comparison owner revision mismatch: " + owner)
+    metadata ∈ dict[str, object] ← json.loads(run(["gh", "api", "/repos/dilapidated-shed/rhs/actions/artifacts/11897193760"], root, work + "/intake/artifact").decode())
+    artifact_id ∈ int ← metadata.get("id", 0)
+    expired ∈ bool ← metadata.get("expired", True)
+    archive_hash ∈ str ← metadata.get("digest", "")
+    workflow ∈ dict[str, object] ← metadata.get("workflow_run")
+    head ∈ str ← workflow.get("head_sha", "")
+    run_id ∈ int ← workflow.get("id", 0)
+    expires ∈ int ← int(time.strftime("%Y%m%d%H%M%S", time.strptime(str(metadata.get("expires_at", "")), "%Y-%m-%dT%H:%M:%SZ")))
+    now ∈ int ← int(time.strftime("%Y%m%d%H%M%S", time.gmtime()))
+    if artifact_id != 11897193760 or expired != False or expires <= now or archive_hash != "sha256:" + ARCHIVE or head != "65095cf491c6194fa2c754a17d9c5dc249df3c33" or run_id != 38568391535:
+        raise ValueError("Baseline artifact provenance or expiry is invalid")
+    owner_run ∈ dict[str, object] ← json.loads(run(["gh", "api", "/repos/dilapidated-shed/rhs/actions/runs/38568391535"], root, work + "/intake/run").decode())
+    conclusion ∈ str ← owner_run.get("conclusion", "")
+    if conclusion != "success":
+        raise ValueError("Baseline owner execution was not successful")
+    payload ∈ bytes ← run(["gh", "api", "/repos/dilapidated-shed/rhs/actions/artifacts/11897193760/zip"], root, work + "/intake/download")
+    if digest(payload) != ARCHIVE:
+        raise ValueError("Baseline archive digest mismatch")
+    archive_path ∈ str ← work + "/intake/baseline.zip"
+    Path(archive_path).write_bytes(payload)
+    archive ∈ object ← zipfile.ZipFile(archive_path)
+    names ∈ list[str] ← archive.namelist()
+    for name in names:
+        if name.startswith("work/evidence/") and not ("../" in name):
+            archive.extract(name, work + "/baseline")
+    baseline ∈ str ← work + "/baseline/work/evidence"
+    ithon ∈ str ← work + "/ithon/ithon"
+    run([ithon, work + "/catfood/profiles/rhs-evaluation/provision.pi", "grease", work], root, work + "/intake/acquire-grease")
+    run([ithon, work + "/catfood/profiles/rhs-evaluation/provision.pi", "model-runtime", work], root, work + "/intake/acquire-model")
+    environment ∈ dict[str, str] ← os.environ
+    environment["ITHON_PYTHON"] ← work + "/model-runtime/bin/python"
+    old_path ∈ str ← environment.get("PATH", "")
+    environment["PATH"] ← work + "/profile/bin:" + old_path
+    command ∈ list[str] ← [work + "/model-runtime/bin/python", work + "/flexible-pipes/scripts/run-pipeline", "rhs-detector-comparison", "--param", "kitchen_task=" + work + "/kitchen/tasks/rhs-autonomous/detector.grease", "--param", "ithon=" + ithon, "--param", "engine=" + work + "/flexible-pipes/scripts/rhs-detector.pi", "--param", "candidate=" + baseline + "/candidate", "--param", "evidence=" + work + "/comparison", "--param", "model=" + model, "--param", "presentation=" + presentation, "--param", "checker=" + work + "/ai-ci/validators/rhs_detector.pi", "--param", "baseline=" + baseline, "--param", "grading=" + work + "/grading", "--runs-root", work + "/pipeline-runs"]
+    run(command, root, work + "/intake/comparison")
+    manifest(work + "/comparison")
+    manifest(work + "/grading")
+    print(Path(work + "/grading/metrics.tsv").read_text())
+
+namespace ∈ dict[str, object] ← globals()
+module_name ∈ str ← namespace.get("__name__", "")
+if module_name == "__main__":
+    main()
