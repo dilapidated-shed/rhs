@@ -18,7 +18,7 @@ def main() → None:
         raise ValueError("Glyph executor requires the positively identified GitHub workspace")
     work ∈ str ← root + "/.glyph-work"
     ithon ∈ str ← work + "/ithon/ithon"
-    pins ∈ dict[str, str] ← {"ithon": "d6e83969f82512e920fb17b44326cb54f31d015c", "catfood": "90471095201bcabeb7ef920fa0101f4e667d1454", "ai-ci": "a2d3ceee28cc8b73a589089217bb435fd4428a86", "kitchen": "3d7849429f355d50dd98426fed1ef03c587367d7", "flexible-pipes": "40ea03ce88666d98490bcc2ad4138a7e214b7f58"}
+    pins ∈ dict[str, str] ← {"ithon": "d6e83969f82512e920fb17b44326cb54f31d015c", "catfood": "90471095201bcabeb7ef920fa0101f4e667d1454", "ai-ci": "a9aa38707c15f2909a40f226621dadf04010d7d9", "kitchen": "3280a9f370d91298f959ffe0d367773ad74c799b", "flexible-pipes": "d88e90371f51254fb68a5d9128e5238c0b448de0"}
     for owner in pins:
         result ∈ object ← subprocess.run(["git", "rev-parse", "HEAD"], cwd=work + "/" + owner, capture_output=True, text=True, check=True)
         observed ∈ str ← result.stdout.strip()
@@ -28,7 +28,7 @@ def main() → None:
     environment ∈ dict[str, str] ← os.environ
     old_path ∈ str ← environment.get("PATH", "")
     environment["PATH"] ← work + "/profile/bin:" + old_path
-    run(["python3", work + "/flexible-pipes/scripts/run-pipeline", "rhs-glyph-acceptance", "--param", "kitchen_task=" + work + "/kitchen/tasks/rhs-autonomous/1.grease", "--param", "rhs=" + root, "--param", "evidence=" + work + "/evidence", "--param", "ithon=" + ithon, "--param", "checker=" + work + "/ai-ci/validators/rhs_glyph.pi", "--runs-root", work + "/pipeline-runs"], root)
+    run(["python3", work + "/flexible-pipes/scripts/run-pipeline", "rhs-glyph-acceptance", "--param", "kitchen_task=" + work + "/kitchen/tasks/rhs-autonomous/2.grease", "--param", "rhs=" + root, "--param", "evidence=" + work + "/evidence", "--param", "ithon=" + ithon, "--param", "checker=" + work + "/ai-ci/validators/rhs_glyph.pi", "--runs-root", work + "/pipeline-runs"], root)
 
 namespace ∈ dict[str, object] ← globals()
 module_name ∈ str ← namespace.get("__name__", "")

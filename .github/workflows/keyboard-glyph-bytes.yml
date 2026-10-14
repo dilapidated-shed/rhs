@@ -37,19 +37,19 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: isomorphisms/ai-ci
-          ref: a2d3ceee28cc8b73a589089217bb435fd4428a86
+          ref: a9aa38707c15f2909a40f226621dadf04010d7d9
           path: .glyph-work/ai-ci
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: isomorphisms/kitchen
-          ref: 3d7849429f355d50dd98426fed1ef03c587367d7
+          ref: 3280a9f370d91298f959ffe0d367773ad74c799b
           path: .glyph-work/kitchen
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: isomorphisms/flexible-pipes
-          ref: 40ea03ce88666d98490bcc2ad4138a7e214b7f58
+          ref: d88e90371f51254fb68a5d9128e5238c0b448de0
           path: .glyph-work/flexible-pipes
           persist-credentials: false
       - name: Qualified maintained C compiler
