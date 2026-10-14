@@ -30,7 +30,14 @@ It also records candidates from the programmers-keyboard discussion, pinned here
 
 Controls are explicit too: TAB, LF, CR, and both LF and CRLF sequences. The fixture puts stdout into binary mode on Windows so running the test does not silently turn the fixture's LF bytes into CRLF.
 
-`glyph_bytes.expected.txt` is the output of compiling and running this exact C program. `make check` rebuilds the program, runs it, and byte-compares the output.
+`glyph_bytes.expected.txt` is the output of compiling and running this exact C program. `make check` rebuilds the program with ICK, runs it, and byte-compares the output.
+The seven array-length quotients use literal `÷`; comments, Unicode scalar
+values and expected output bytes are unchanged. Set `ICK` to the exact compiler
+path, `ICK_FLAGS` for any explicit resource prefixes, and `ICK_LINK_FLAGS` to
+the producer's declared native runtime link flags. CI builds ICK
+`c61e448251744a2f40ad743ebef1a027bdcd2f9d` through the pinned shared host producer
+and runs this same comparison. The fixture observes bytes on the execution
+host; it does not qualify physical keyboard behavior.
 
 ## Propagation rule
 
