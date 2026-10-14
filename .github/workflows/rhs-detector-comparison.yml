@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: isomorphisms/flexible-pipes
-          ref: d88e90371f51254fb68a5d9128e5238c0b448de0
+          ref: 71fddb2d1ac36bcde35f678ea52030bedd3fb51f
           path: .detector-work/flexible-pipes
           persist-credentials: false
       - name: Run frozen candidate and independent raw-response grading through FP

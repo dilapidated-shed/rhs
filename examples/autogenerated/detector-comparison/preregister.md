@@ -1,5 +1,7 @@
 # Frozen RHS detector comparison
 
+The first completed comparison resolved and recorded 1.5B revision `2e1fd397ee46e1388853d2af2c993145b0f1098a` and 3B revision `488639f1ff808d1d3d0ba301aef8c11461451ec5` before inference. Replay requires exactly these same revisions and rejects a mismatching owner response; it does not reselect mutable model branches. The first experiment and raw evidence remain unchanged, and this identity hardening does not change prompts, weights, family assignments or grading.
+
 Preserve the original 0.5B evaluation and its raw responses unchanged. The independently reexecuted 104-packet archive from RHS source 65095cf491c6194fa2c754a17d9c5dc249df3c33, run 38568391535, artifact 11897193760 is an immutable baseline input (archive SHA-256 939159345e80e82f90493f2a78de68983a544e1498b104dfdb19e6a2092a03f4).
 
 Before candidate inference: freeze Qwen2.5-Coder 1.5B and 3B Instruct candidates, two presentations (original claim/source/observations; identical claim/observations with source omitted), the system instruction checked into Flexible Pipes, strict first-line decisions, CPU float32/eager, two threads, seed 1701, greedy maximum 16 new tokens and no input truncation. Resolve each model/tokenizer to the same immutable model revision before calls. No training, thresholds or response-driven prompt changes.

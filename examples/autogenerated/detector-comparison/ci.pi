@@ -50,7 +50,7 @@ def main() → None:
     if root != "/home/runner/work/rhs/rhs":
         raise ValueError("Comparison requires the observed GitHub RHS workspace")
     work ∈ str ← root + "/.detector-work"
-    pins ∈ dict[str, str] ← {"ithon": "d6e83969f82512e920fb17b44326cb54f31d015c", "catfood": "90471095201bcabeb7ef920fa0101f4e667d1454", "ai-ci": "a9aa38707c15f2909a40f226621dadf04010d7d9", "kitchen": "3280a9f370d91298f959ffe0d367773ad74c799b", "flexible-pipes": "d88e90371f51254fb68a5d9128e5238c0b448de0"}
+    pins ∈ dict[str, str] ← {"ithon": "d6e83969f82512e920fb17b44326cb54f31d015c", "catfood": "90471095201bcabeb7ef920fa0101f4e667d1454", "ai-ci": "a9aa38707c15f2909a40f226621dadf04010d7d9", "kitchen": "3280a9f370d91298f959ffe0d367773ad74c799b", "flexible-pipes": "71fddb2d1ac36bcde35f678ea52030bedd3fb51f"}
     for owner in pins:
         result ∈ object ← subprocess.run(["git", "rev-parse", "HEAD"], cwd=work + "/" + owner, capture_output=True, text=True, check=True)
         observed ∈ str ← result.stdout.strip()
