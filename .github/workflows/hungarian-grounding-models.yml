@@ -1,4 +1,6 @@
 name: RHS grounding actual models
+env:
+  GH_TOKEN: ${{ github.token }}
 on:
   workflow_dispatch:
   push:

@@ -9,10 +9,48 @@ jobs:
   glyph-bytes:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: dilapidated-shed/rhs
+          ref: 09398b1eb4f3143b12cd6149ba0cb11fc22f7f07
+          path: .rhs-glyph-baseline
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: dilapidated-shed/ithon
+          ref: d6e83969f82512e920fb17b44326cb54f31d015c
+          path: .glyph-work/ithon
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/catfood
+          ref: 90471095201bcabeb7ef920fa0101f4e667d1454
+          path: .glyph-work/catfood
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/ai-ci
+          ref: a2d3ceee28cc8b73a589089217bb435fd4428a86
+          path: .glyph-work/ai-ci
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/kitchen
+          ref: 3d7849429f355d50dd98426fed1ef03c587367d7
+          path: .glyph-work/kitchen
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: isomorphisms/flexible-pipes
+          ref: 40ea03ce88666d98490bcc2ad4138a7e214b7f58
+          path: .glyph-work/flexible-pipes
           persist-credentials: false
       - name: Qualified maintained C compiler
         id: ick
@@ -22,7 +60,14 @@ jobs:
           ICK: ${{ steps.ick.outputs.compiler }}
           ICK_LINK_FLAGS: ${{ steps.ick.outputs.link_flags }}
         run: make -C keyboard-glyphs check ICK="$ICK" ICK_LINK_FLAGS="$ICK_LINK_FLAGS"
+      - name: Independent baseline and migration acceptance through FP and Kitchen
+        env:
+          ICK: ${{ steps.ick.outputs.compiler }}
+          ICK_SOURCE_ROOT: ${{ github.workspace }}/.ick-host-source
+        shell: /home/runner/work/rhs/rhs/.glyph-work/ithon/ithon /home/runner/work/rhs/rhs/keyboard-glyphs/ci.pi {0}
+        run: /home/runner/work/rhs/rhs
       - name: Preserve exact observed bytes
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: keyboard-glyph-bytes-${{ github.event.pull_request.head.sha || github.sha }}
@@ -30,5 +75,11 @@ jobs:
             keyboard-glyphs/glyph_bytes
             keyboard-glyphs/glyph_bytes.actual.txt
             keyboard-glyphs/glyph_bytes.expected.txt
+            .glyph-work/evidence
+            .glyph-work/profile
+            .glyph-work/provision
+            .glyph-work/pipeline-runs
           if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 90
 
