@@ -1,0 +1,11 @@
+# Frozen RHS detector comparison
+
+Preserve the original 0.5B evaluation and its raw responses unchanged. The independently reexecuted 104-packet archive from RHS source 65095cf491c6194fa2c754a17d9c5dc249df3c33, run 38568391535, artifact 11897193760 is an immutable baseline input (archive SHA-256 939159345e80e82f90493f2a78de68983a544e1498b104dfdb19e6a2092a03f4).
+
+Before candidate inference: freeze Qwen2.5-Coder 1.5B and 3B Instruct candidates, two presentations (original claim/source/observations; identical claim/observations with source omitted), the system instruction checked into Flexible Pipes, strict first-line decisions, CPU float32/eager, two threads, seed 1701, greedy maximum 16 new tokens and no input truncation. Resolve each model/tokenizer to the same immutable model revision before calls. No training, thresholds or response-driven prompt changes.
+
+Families 0–3 are development/reporting families; families 4–7 are held out from candidate prompt/model selection. All related implementation/source/claim variants stay in the same family. Freeze both presentations without inspecting candidate responses, report every candidate on both partitions, and never select a winner from held-out scores. These are public families whose poor original baseline is already known, not hidden novel-family evidence; possible pretraining contamination is unresolved. Improvements are comparison results for the whole candidate configuration, not a causal claim that parameter count alone caused them.
+
+Inference receives only neutral packets. Grading labels, exact relations, checker findings, diagnostics and lineage remain outside model inputs. AI-CI reconstructs decisions from raw responses and computes confusion counts, exact precision/recall fractions, false positives, abstentions, parse failures, execution failures and unsupported claims separately. Constant agreement/contradiction and simple explicit claim-text rules are baselines. A failed/unavailable run is not an abstention or detector success.
+
+Retain source/package/model/tokenizer identities, original/presented packets, rendered prompts, token IDs, raw responses, process failures and hashes. Negative results are valid. Source checks and parser tests do not establish inference.
