@@ -1,0 +1,9 @@
+# Finding values and evidence boundary
+
+Source identity, claim identity, observed behavior, execution scope and evidence hashes are distinct record types. Exact findings and model findings are separate nominal types and have separate serializers; the model serializer cannot emit an exact evidence tag. Status tags are closed sets at the wire boundary. A serialized finding is a producer assertion, not independent acceptance.
+
+The implementation extends the established Ithon checker rather than adding Python application source. Ithon checks the complete `.pi` module. Its foreign standard-library NamedTuple facility provides immutable records; Ithon does not yet validate every foreign constructor argument or resolve every record attribute, so the wire validator also checks shape, hashes, enums and provenance. Idriç was not available in the current target's verified Cat Food checkout inventory (`catfood where Idric` failed); no guessed compiler or alternate Idriç backend is used.
+
+The preserved `finding-declarations-attempt.pi` fails at the first bare record field declaration: Ithon currently reads `repository ∈ str` as an expression rather than an annotation. The executable form uses explicitly typed default bindings to declare NamedTuple fields. Empty/default identities are not accepted evidence; AI-CI requires all fields to match independent capture and rejects missing provenance. The smallest language repair is bare typed field declarations, followed by checked constructor arguments and resolved record attributes.
+
+AI-CI must compare evidence to independently captured execution under an independently fixed source/claim contract, reject expired or altered records, and recompute an exact verdict. A receipt SHA-256 is integrity evidence, not a signature or proof that its author executed anything. Model estimates remain model estimates even when their response and prompt hashes are valid. UNKNOWN is retained for unsupported relations and scopes.

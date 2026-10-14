@@ -1,0 +1,179 @@
+"""Exact integer/rational, trace and snapshot relations with explicit domains."""
+from builtins import ValueError, LookupError
+
+def integers(text ∈ str) → list[int]:
+    result ∈ list[int] ← []
+    if text == "":
+        return result
+    fields ∈ list[str] ← text.split(",")
+    for field in fields:
+        result.append(int(field))
+    return result
+
+def natural(text ∈ str) → int:
+    value ∈ int ← int(text)
+    if value < 0:
+        raise ValueError("Unsupported negative count")
+    return value
+
+def positive(text ∈ str) → int:
+    value ∈ int ← natural(text)
+    if value == 0:
+        raise ValueError("Unsupported zero width or denominator")
+    return value
+
+def matrix_rows(text ∈ str) → list[list[int]]:
+    result ∈ list[list[int]] ← []
+    lines ∈ list[str] ← text.split(";")
+    for line in lines:
+        result.append(integers(line))
+    return result
+
+def determinant(matrix ∈ list[list[int]]) → int:
+    width ∈ int ← len(matrix)
+    if width == 0:
+        return 1
+    total ∈ int ← 0
+    for column in range(width):
+        minor ∈ list[list[int]] ← []
+        for row in range(1, width):
+            remaining ∈ list[int] ← []
+            for index in range(width):
+                if index != column:
+                    remaining.append(matrix[row][index])
+            minor.append(remaining)
+        sign ∈ int ← 1
+        if column % 2 == 1:
+            sign ← -1
+        total ← total + sign × matrix[0][column] × determinant(minor)
+    return total
+
+def action_holds(observation ∈ dict[str, str], rotation ∈ bool) → bool:
+    before ∈ list[int] ← integers(observation["input"])
+    after ∈ list[int] ← integers(observation["output.numerators"])
+    matrix ∈ list[list[int]] ← matrix_rows(observation["matrix.numerators"])
+    denominator ∈ int ← positive(observation["matrix.denominator"])
+    output_denominator ∈ int ← positive(observation["output.denominator"])
+    columns ∈ int ← len(before)
+    rows ∈ int ← len(matrix)
+    if columns < 1 or columns > 8 or rows < 1 or rows > 8 or len(after) != rows:
+        raise ValueError("Unsupported transformation dimensions")
+    for entries in matrix:
+        if len(entries) != columns:
+            raise ValueError("Incomplete matrix observation")
+    if rotation:
+        if rows != columns or rows > 6:
+            raise ValueError("Rotation requires a square matrix of dimension 1–6")
+        for first in range(columns):
+            for second in range(columns):
+                pairing ∈ int ← 0
+                for row in range(rows):
+                    pairing ← pairing + matrix[row][first] × matrix[row][second]
+                required ∈ int ← 0
+                if first == second:
+                    required ← denominator × denominator
+                if pairing != required:
+                    return False
+        required_determinant ∈ int ← 1
+        for index in range(rows):
+            required_determinant ← required_determinant × denominator
+        if determinant(matrix) != required_determinant:
+            return False
+    for row in range(rows):
+        coordinate ∈ int ← 0
+        for column in range(columns):
+            coordinate ← coordinate + matrix[row][column] × before[column]
+        if after[row] × denominator != coordinate × output_denominator:
+            return False
+    return True
+
+def reflection_holds(observation ∈ dict[str, str]) → bool:
+    before ∈ list[int] ← integers(observation["input"])
+    normal ∈ list[int] ← integers(observation["normal"])
+    after ∈ list[int] ← integers(observation["output.numerators"])
+    denominator ∈ int ← positive(observation["output.denominator"])
+    width ∈ int ← len(before)
+    if width < 1 or width > 8 or len(normal) != width or len(after) != width:
+        raise ValueError("Unsupported reflection dimensions")
+    squared_normal ∈ int ← 0
+    pairing ∈ int ← 0
+    for index in range(width):
+        squared_normal ← squared_normal + normal[index] × normal[index]
+        pairing ← pairing + before[index] × normal[index]
+    if squared_normal == 0:
+        raise ValueError("Reflection normal must be nonzero")
+    for index in range(width):
+        numerator ∈ int ← before[index] × squared_normal - 2 × normal[index] × pairing
+        if after[index] × squared_normal != numerator × denominator:
+            return False
+    return True
+
+def sequence(text ∈ str) → list[str]:
+    result ∈ list[str] ← []
+    if text == "":
+        return result
+    result ← text.split(",")
+    for entry in result:
+        if entry == "":
+            raise ValueError("Incomplete call sequence")
+    return result
+
+def holds(relation ∈ str, observation ∈ dict[str, str]) → bool:
+    if relation == "counts/bytes-elements":
+        elements ∈ int ← natural(observation["element_count"])
+        width ∈ int ← positive(observation["element_width_bytes"])
+        reported ∈ int ← natural(observation["reported_bytes"])
+        return reported == elements × width
+    if relation == "calls/count-order-effects":
+        required ∈ list[str] ← sequence(observation["required_order"])
+        recorded ∈ list[str] ← sequence(observation["observed_order"])
+        count ∈ int ← natural(observation["call_count"])
+        effects ∈ int ← natural(observation["effects_per_call"])
+        before ∈ int ← int(observation["effects.before"])
+        after ∈ int ← int(observation["effects.after"])
+        return required == recorded and count == len(recorded) and after - before == effects × count
+    if relation == "dimensions/scalar-vector" or relation == "dimensions/row-vectors":
+        if observation["scalar_field"] != "real":
+            raise ValueError("Unsupported mathematical carrier")
+        shape ∈ list[int] ← integers(observation["array.shape"])
+        rank ∈ int ← natural(observation["array.rank"])
+        dimension ∈ int ← natural(observation["vector.dimension"])
+        coordinates ∈ int ← natural(observation["coordinates.count"])
+        size ∈ int ← 1
+        for extent in shape:
+            if extent < 0:
+                raise ValueError("Unsupported negative array extent")
+            size ← size × extent
+        if rank != len(shape) or coordinates != size:
+            return False
+        if relation == "dimensions/row-vectors":
+            if rank != 2:
+                raise ValueError("Row-vector relation requires an explicit rank-two encoding")
+            return dimension == shape[1]
+        return dimension == size
+    if relation == "transform/reflection":
+        return reflection_holds(observation)
+    if relation == "transform/rotation":
+        return action_holds(observation, True)
+    if relation == "transform/linear":
+        return action_holds(observation, False)
+    if relation == "repeat/idempotent" or relation == "repeat/pure":
+        if natural(observation["call_count"]) != 2:
+            raise ValueError("Repeated-call relation requires two recorded calls")
+        first ∈ str ← observation["state.after.1"]
+        second ∈ str ← observation["state.after.2"]
+        stable ∈ bool ← first == second and observation["serialized.1"] == observation["serialized.2"]
+        if relation == "repeat/pure":
+            return stable and first == observation["state.before"]
+        return stable
+    if relation == "serialization/state-canonical-int":
+        if natural(observation["call_count"]) != 2 or observation["encoding"] != "decimal-utf8-hex":
+            raise ValueError("Unsupported recorded-call or serialization scope")
+        before ∈ int ← int(observation["state.before"])
+        increment ∈ int ← int(observation["increment"])
+        first_state ∈ int ← int(observation["state.after.1"])
+        second_state ∈ int ← int(observation["state.after.2"])
+        first_bytes ∈ str ← str(first_state).encode().hex()
+        second_bytes ∈ str ← str(second_state).encode().hex()
+        return first_state == before + increment and second_state == first_state + increment and observation["serialized.1"] == first_bytes and observation["serialized.2"] == second_bytes
+    raise LookupError("Unsupported independently declared relation")
