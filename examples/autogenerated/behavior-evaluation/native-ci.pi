@@ -17,7 +17,7 @@ def main() → None:
     if root != "/home/runner/work/rhs/rhs":
         raise ValueError("Native finding executor requires the verified GitHub workspace")
     work ∈ str ← root + "/.native-work"
-    pins ∈ dict[str, str] ← {"ithon": "d6e83969f82512e920fb17b44326cb54f31d015c", "catfood": "90471095201bcabeb7ef920fa0101f4e667d1454", "ai-ci": "7d51367e0be367caf72da1f50e29cd268750734b", "kitchen": "3613efd6c8550f4f7c70c27ee06c6e8ef8bb1051", "flexible-pipes": "133e0b5a4e04a928e1c8999a22bd153339e49856"}
+    pins ∈ dict[str, str] ← {"ithon": "d6e83969f82512e920fb17b44326cb54f31d015c", "catfood": "90471095201bcabeb7ef920fa0101f4e667d1454", "ai-ci": "a82d40bab9dc040e17bd420c11d9346f103262ad", "kitchen": "3613efd6c8550f4f7c70c27ee06c6e8ef8bb1051", "flexible-pipes": "133e0b5a4e04a928e1c8999a22bd153339e49856"}
     for owner in pins:
         result ∈ object ← subprocess.run(["git", "rev-parse", "HEAD"], cwd=work + "/" + owner, capture_output=True, text=True, check=True)
         revision ∈ str ← result.stdout.strip()
