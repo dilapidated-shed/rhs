@@ -3,7 +3,8 @@ from builtins import ValueError
 
 def coordinates(text ∈ str) → list[int]:
     result ∈ list[int] ← []
-    for piece in text.split(","):
+    pieces ∈ list[str] ← text.split(",")
+    for piece in pieces:
         if piece == "":
             raise ValueError("Incomplete coordinate")
         result.append(int(piece))
@@ -64,7 +65,8 @@ def orthogonal_frame(observation ∈ dict[str, str]) → bool:
     if dimensions > 6:
         raise ValueError("Orthogonal frame supports dimensions 1–6")
     rows ∈ list[list[int]] ← []
-    for line in observation["basis.numerators"].split(";"):
+    encoded_rows ∈ list[str] ← observation["basis.numerators"].split(";")
+    for line in encoded_rows:
         rows.append(coordinates(line))
     denominator ∈ int ← int(observation["basis.denominator"])
     if denominator <= 0:
