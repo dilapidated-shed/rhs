@@ -1,5 +1,6 @@
 """Exact integer/rational, trace and snapshot relations with explicit domains."""
 from builtins import ValueError, LookupError
+import hyperplanes
 
 def integers(text ∈ str) → list[int]:
     result ∈ list[int] ← []
@@ -119,6 +120,12 @@ def sequence(text ∈ str) → list[str]:
     return result
 
 def holds(relation ∈ str, observation ∈ dict[str, str]) → bool:
+    if relation == "hyperplane/affine-side":
+        return hyperplanes.affine_side(observation)
+    if relation == "hyperplane/scale-and-side":
+        return hyperplanes.scale_and_side(observation)
+    if relation == "hyperplane/orthogonal-frame":
+        return hyperplanes.orthogonal_frame(observation)
     if relation == "counts/bytes-elements":
         elements ∈ int ← natural(observation["element_count"])
         width ∈ int ← positive(observation["element_width_bytes"])
