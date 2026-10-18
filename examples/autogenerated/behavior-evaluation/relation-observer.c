@@ -92,6 +92,44 @@ int main(int argc, char **argv)
     printf("call_count\t%u\nencoding\tdecimal-utf8-hex\nstate.before\t%ld\nincrement\t2\nstate.after.1\t%ld\nstate.after.2\t%ld\n", calls, before, first, second);
     serialized("serialized.1", first + mutant);
     serialized("serialized.2", second);
+  } else if (strcmp(group, "hyperplane") == 0) {
+    long point[2] = {2, -3};
+    long normal[2] = {1, 2};
+    long offset = 5;
+    long affine = normal[0] × point[0] + normal[1] × point[1] + offset;
+    int reported = (affine > 0) - (affine < 0);
+    if (mutant) reported = -reported;
+    printf("point\t%ld,%ld\nnormal\t%ld,%ld\noffset\t%ld\nside\t%d\n",
+           point[0], point[1], normal[0], normal[1], offset, reported);
+  } else if (strcmp(group, "scale") == 0) {
+    long point[2] = {2, -3};
+    long normal[2] = {1, 2};
+    long offset = 5, factor = -2;
+    long scaled_normal[2] = {factor × normal[0], factor × normal[1]};
+    long scaled_offset = factor × offset + mutant;
+    long original = normal[0] × point[0] + normal[1] × point[1] + offset;
+    long transformed = scaled_normal[0] × point[0] + scaled_normal[1] × point[1] + scaled_offset;
+    printf("point\t%ld,%ld\nnormal\t%ld,%ld\noffset\t%ld\nscale\t%ld\nscaled.normal\t%ld,%ld\nscaled.offset\t%ld\nside.before\t%d\nside.after\t%d\n",
+           point[0], point[1], normal[0], normal[1], offset, factor,
+           scaled_normal[0], scaled_normal[1], scaled_offset,
+           (original > 0) - (original < 0), (transformed > 0) - (transformed < 0));
+  } else if (strcmp(group, "frame") == 0) {
+    long point[2] = {3, 1}, normal[2] = {2, -1}, offset = -4;
+    long basis[2][2] = {{3, -4}, {4, 3}};
+    long point_after[2], normal_after[2];
+    long original = normal[0] × point[0] + normal[1] × point[1] + offset;
+    long transformed;
+    size_t coordinate;
+    for (coordinate = 0; coordinate < 2; ++coordinate) {
+      point_after[coordinate] = basis[coordinate][0] × point[0] + basis[coordinate][1] × point[1];
+      normal_after[coordinate] = basis[coordinate][0] × normal[0] + basis[coordinate][1] × normal[1];
+    }
+    if (mutant) point_after[1] -= 1;
+    transformed = normal_after[0] × point_after[0] + normal_after[1] × point_after[1] + offset × 25;
+    printf("point\t%ld,%ld\nnormal\t%ld,%ld\noffset\t%ld\nbasis.numerators\t3,-4;4,3\nbasis.denominator\t5\npoint.after.numerators\t%ld,%ld\nnormal.after.numerators\t%ld,%ld\nside.before\t%d\nside.after\t%d\n",
+           point[0], point[1], normal[0], normal[1], offset,
+           point_after[0], point_after[1], normal_after[0], normal_after[1],
+           (original > 0) - (original < 0), (transformed > 0) - (transformed < 0));
   } else return 64;
   return 0;
 }
