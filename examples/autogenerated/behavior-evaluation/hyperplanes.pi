@@ -75,8 +75,8 @@ def orthogonal_frame(observation ∈ dict[str, str]) → bool:
     normal_after ∈ list[int] ← coordinates(observation["normal.after.numerators"])
     if len(rows) != dimensions or len(point_after) != dimensions or len(normal_after) != dimensions:
         raise ValueError("Incomplete orthogonal observation")
-    for row in rows:
-        if len(row) != dimensions:
+    for entries in rows:
+        if len(entries) != dimensions:
             raise ValueError("Incomplete orthogonal matrix")
     for first in range(dimensions):
         for second in range(dimensions):
