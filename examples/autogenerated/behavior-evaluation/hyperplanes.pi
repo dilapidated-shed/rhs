@@ -1,0 +1,100 @@
+"""Exact bounded affine-hyperplane observations, not inferred name semantics."""
+from builtins import ValueError
+
+def coordinates(text ∈ str) → list[int]:
+    result ∈ list[int] ← []
+    for piece in text.split(","):
+        if piece == "":
+            raise ValueError("Incomplete coordinate")
+        result.append(int(piece))
+    return result
+
+def sign(value ∈ int) → int:
+    if value < 0:
+        return -1
+    if value > 0:
+        return 1
+    return 0
+
+def score(point ∈ list[int], normal ∈ list[int], offset ∈ int) → int:
+    dimensions ∈ int ← len(point)
+    if dimensions < 1 or dimensions > 8 or len(normal) != dimensions:
+        raise ValueError("Unsupported affine hyperplane dimensions")
+    nonzero ∈ bool ← False
+    result ∈ int ← offset
+    for index in range(dimensions):
+        if normal[index] != 0:
+            nonzero ← True
+        result ← result + point[index] × normal[index]
+    if not nonzero:
+        raise ValueError("Affine hyperplane requires a nonzero normal")
+    return result
+
+def affine_side(observation ∈ dict[str, str]) → bool:
+    point ∈ list[int] ← coordinates(observation["point"])
+    normal ∈ list[int] ← coordinates(observation["normal"])
+    offset ∈ int ← int(observation["offset"])
+    return int(observation["side"]) == sign(score(point, normal, offset))
+
+def scale_and_side(observation ∈ dict[str, str]) → bool:
+    point ∈ list[int] ← coordinates(observation["point"])
+    normal ∈ list[int] ← coordinates(observation["normal"])
+    offset ∈ int ← int(observation["offset"])
+    original ∈ int ← score(point, normal, offset)
+    factor ∈ int ← int(observation["scale"])
+    if factor == 0:
+        raise ValueError("Zero scaling collapses the hyperplane")
+    scaled_normal ∈ list[int] ← coordinates(observation["scaled.normal"])
+    scaled_offset ∈ int ← int(observation["scaled.offset"])
+    if len(scaled_normal) != len(normal):
+        raise ValueError("Incomplete scaled normal")
+    for index in range(len(normal)):
+        if scaled_normal[index] != factor × normal[index]:
+            return False
+    if scaled_offset != factor × offset:
+        return False
+    return int(observation["side.before"]) == sign(original) and int(observation["side.after"]) == sign(factor × original)
+
+def orthogonal_frame(observation ∈ dict[str, str]) → bool:
+    point ∈ list[int] ← coordinates(observation["point"])
+    normal ∈ list[int] ← coordinates(observation["normal"])
+    offset ∈ int ← int(observation["offset"])
+    original ∈ int ← score(point, normal, offset)
+    dimensions ∈ int ← len(point)
+    if dimensions > 6:
+        raise ValueError("Orthogonal frame supports dimensions 1–6")
+    rows ∈ list[list[int]] ← []
+    for line in observation["basis.numerators"].split(";"):
+        rows.append(coordinates(line))
+    denominator ∈ int ← int(observation["basis.denominator"])
+    if denominator <= 0:
+        raise ValueError("Basis denominator must be positive")
+    point_after ∈ list[int] ← coordinates(observation["point.after.numerators"])
+    normal_after ∈ list[int] ← coordinates(observation["normal.after.numerators"])
+    if len(rows) != dimensions or len(point_after) != dimensions or len(normal_after) != dimensions:
+        raise ValueError("Incomplete orthogonal observation")
+    for row in rows:
+        if len(row) != dimensions:
+            raise ValueError("Incomplete orthogonal matrix")
+    for first in range(dimensions):
+        for second in range(dimensions):
+            pairing ∈ int ← 0
+            for row in range(dimensions):
+                pairing ← pairing + rows[row][first] × rows[row][second]
+            required ∈ int ← 0
+            if first == second:
+                required ← denominator × denominator
+            if pairing != required:
+                return False
+    for row in range(dimensions):
+        rotated_point ∈ int ← 0
+        rotated_normal ∈ int ← 0
+        for column in range(dimensions):
+            rotated_point ← rotated_point + rows[row][column] × point[column]
+            rotated_normal ← rotated_normal + rows[row][column] × normal[column]
+        if point_after[row] != rotated_point or normal_after[row] != rotated_normal:
+            return False
+    transformed ∈ int ← offset × denominator × denominator
+    for index in range(dimensions):
+        transformed ← transformed + point_after[index] × normal_after[index]
+    return transformed == original × denominator × denominator and int(observation["side.before"]) == sign(original) and int(observation["side.after"]) == sign(transformed)
