@@ -44,8 +44,12 @@ A fully specified, nonorthogonal matrix or false reported side is a
 contradiction. Exact checks concern only the recorded point, not an entire
 program.
 
-The repository-local positive/negative tests are **static checker controls**.
-They are not compiled native witnesses and are not independently admitted by
-AI-CI. The previously accepted 20 native case pairs remain unchanged. Native
-evidence for these new relations requires separate executable producers and
-independent reconstruction in the AI-CI verifier.
+The Ithon positive/negative controls are **static checker tests**. The C
+observer additionally supplies three native positive/mutated case pairs. The
+existing Kitchen/Flexible Pipes path records those executions at O0 and O2;
+a separately pinned AI-CI verifier recompiles the C source, recaptures the
+output and recomputes the three judgments using rational arithmetic. On a
+successful exact-head run that is 26 case pairs, 52 independently recaptured
+executions, 26 deliberate counterexamples and 52 forged-status rejections.
+These fixtures do not establish behavior of separate geometry-owner programs,
+unseen points or physical devices. Source presence alone is not acceptance.
