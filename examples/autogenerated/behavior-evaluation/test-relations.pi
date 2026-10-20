@@ -7,7 +7,7 @@ from builtins import ValueError
 import checker
 import finding as finding_values
 
-CLAIMS ∈ dict[str, str] ← {"counts/bytes-elements": "The reported byte count equals element count times bytes per element.", "calls/count-order-effects": "The recorded calls follow the required order, with the declared count and effect delta.", "dimensions/scalar-vector": "The array explicitly encodes one real vector whose dimension equals the number of stored scalar coordinates.", "dimensions/row-vectors": "Each row of this rank-two array explicitly encodes a real vector with the declared dimension.", "transform/reflection": "For the recorded input and nonzero normal, the output is the Euclidean hyperplane reflection.", "transform/rotation": "The declared rational matrix is a proper Euclidean rotation and produces the recorded output.", "transform/linear": "The declared rational matrix applied to the recorded input produces the recorded output.", "repeat/idempotent": "After the first call, the second call preserves both the recorded state and serialized output.", "repeat/pure": "Both recorded calls preserve the input state and produce identical serialized output.", "serialization/state-canonical-int": "Two recorded calls advance integer state by the declared increment and serialize each state as canonical decimal UTF-8."}
+CLAIMS ∈ dict[str, str] ← {"counts/bytes-elements": "The reported byte count equals element count times bytes per element.", "calls/count-order-effects": "The recorded calls follow the required order, with the declared count and effect delta.", "dimensions/scalar-vector": "The array explicitly encodes one real vector whose dimension equals the number of stored scalar coordinates.", "dimensions/row-vectors": "Each row of this rank-two array explicitly encodes a real vector with the declared dimension.", "transform/reflection": "For the recorded input and nonzero normal, the output is the Euclidean hyperplane reflection.", "transform/rotation": "The declared rational matrix is a proper Euclidean rotation and produces the recorded output.", "transform/linear": "The declared rational matrix applied to the recorded input produces the recorded output.", "repeat/idempotent": "After the first call, the second call preserves both the recorded state and serialized output.", "repeat/pure": "Both recorded calls preserve the input state and produce identical serialized output.", "serialization/state-canonical-int": "Two recorded calls advance integer state by the declared increment and serialize each state as canonical decimal UTF-8.", "hyperplane/affine-side": "The reported side is the exact sign of normal dot point plus offset.", "hyperplane/scale-and-side": "The affine coefficients are scaled by the declared nonzero factor and reported oriented sides change accordingly.", "hyperplane/orthogonal-frame": "Both the point and normal transform under the declared exact orthogonal matrix without changing the affine side."}
 
 def observation(fields ∈ dict[str, str]) → str:
     lines ∈ list[str] ← []
@@ -73,13 +73,63 @@ def selftest() → None:
     twins("serialization/state-canonical-int", serialized, "serialized.1", "37")
     serialized["encoding"] ← "arbitrary-json"
     require("serialization/state-canonical-int", serialized, "unknown")
+
+    # The sign belongs to the explicitly oriented equation, not its zero set.
+    affine ∈ dict[str, str] ← {"point": "2,-3", "normal": "1,2", "offset": "5", "side": "1"}
+    twins("hyperplane/affine-side", affine, "side", "-1")
+    affine["offset"] ← "4"
+    affine["side"] ← "0"
+    require("hyperplane/affine-side", affine, "agreement-tested")
+    affine["normal"] ← "-1,-2"
+    affine["offset"] ← "-5"
+    affine["side"] ← "-1"
+    require("hyperplane/affine-side", affine, "agreement-tested")
+    affine["normal"] ← "0,0"
+    require("hyperplane/affine-side", affine, "unknown")
+    require("hyperplane/affine-side", {"point": "1,2", "normal": "1", "offset": "0", "side": "1"}, "unknown")
+
+    scaled ∈ dict[str, str] ← {"point": "2,-3", "normal": "1,2", "offset": "5", "scale": "3", "scaled.normal": "3,6", "scaled.offset": "15", "side.before": "1", "side.after": "1"}
+    twins("hyperplane/scale-and-side", scaled, "scaled.normal", "3,5")
+    twins("hyperplane/scale-and-side", scaled, "scaled.offset", "14")
+    twins("hyperplane/scale-and-side", scaled, "side.after", "-1")
+    scaled["scale"] ← "-2"
+    scaled["scaled.normal"] ← "-2,-4"
+    scaled["scaled.offset"] ← "-10"
+    scaled["side.after"] ← "-1"
+    require("hyperplane/scale-and-side", scaled, "agreement-tested")
+    scaled["offset"] ← "4"
+    scaled["scaled.offset"] ← "-8"
+    scaled["side.before"] ← "0"
+    scaled["side.after"] ← "0"
+    require("hyperplane/scale-and-side", scaled, "agreement-tested")
+    scaled["scale"] ← "0"
+    require("hyperplane/scale-and-side", scaled, "unknown")
+
+    frame ∈ dict[str, str] ← {"point": "3,1", "normal": "2,-1", "offset": "-4", "basis.numerators": "3,-4;4,3", "basis.denominator": "5", "point.after.numerators": "5,15", "normal.after.numerators": "10,5", "side.before": "1", "side.after": "1"}
+    twins("hyperplane/orthogonal-frame", frame, "point.after.numerators", "5,14")
+    twins("hyperplane/orthogonal-frame", frame, "normal.after.numerators", "10,-5")
+    twins("hyperplane/orthogonal-frame", frame, "side.after", "-1")
+    twins("hyperplane/orthogonal-frame", frame, "basis.numerators", "3,-4;4,4")
+    frame["basis.numerators"] ← "-1,0;0,1"
+    frame["basis.denominator"] ← "1"
+    frame["point.after.numerators"] ← "-3,1"
+    frame["normal.after.numerators"] ← "-2,-1"
+    require("hyperplane/orthogonal-frame", frame, "agreement-tested")
+    frame["offset"] ← "-5"
+    frame["side.before"] ← "0"
+    frame["side.after"] ← "0"
+    require("hyperplane/orthogonal-frame", frame, "agreement-tested")
+    frame["basis.numerators"] ← "0,0;0,0"
+    require("hyperplane/orthogonal-frame", frame, "contradiction")
+    frame["normal"] ← "0,0"
+    require("hyperplane/orthogonal-frame", frame, "unknown")
     unsupported ∈ dict[str, str] ← {"output": "1"}
     require("claim/infer-from-variable-name", unsupported, "unknown")
-    print("PASS exact relation controls, counterexamples and explicit domain boundaries")
+    print("PASS exact relations, affine hyperplanes, counterexamples and domain boundaries")
 
 def native(binary ∈ str, output ∈ str, root ∈ str) → None:
     Path(output).mkdir(parents=True, exist_ok=False)
-    groups ∈ list[list[str]] ← [["counts", "counts/bytes-elements"], ["calls", "calls/count-order-effects"], ["scalar", "dimensions/scalar-vector"], ["rows", "dimensions/row-vectors"], ["reflection", "transform/reflection"], ["rotation", "transform/rotation"], ["linear", "transform/linear"], ["idempotent", "repeat/idempotent"], ["pure", "repeat/pure"], ["serialization", "serialization/state-canonical-int"]]
+    groups ∈ list[list[str]] ← [["counts", "counts/bytes-elements"], ["calls", "calls/count-order-effects"], ["scalar", "dimensions/scalar-vector"], ["rows", "dimensions/row-vectors"], ["reflection", "transform/reflection"], ["rotation", "transform/rotation"], ["linear", "transform/linear"], ["idempotent", "repeat/idempotent"], ["pure", "repeat/pure"], ["serialization", "serialization/state-canonical-int"], ["hyperplane", "hyperplane/affine-side"], ["scale", "hyperplane/scale-and-side"], ["frame", "hyperplane/orthogonal-frame"]]
     receipts ∈ list[str] ← ["case\trelation\tstatus\tobservation_sha256\tbinary_sha256"]
     binary_hash ∈ str ← checker.digest(Path(binary).read_bytes())
     source_path ∈ str ← "examples/autogenerated/behavior-evaluation/relation-observer.c"
@@ -127,7 +177,7 @@ def native(binary ∈ str, output ∈ str, root ∈ str) → None:
             Path(directory + "/finding.tsv").write_text(finding_values.serialize(fields_value))
             receipts.append(identifier + "\t" + group[1] + "\t" + expected + "\t" + finding["observation"] + "\t" + binary_hash)
     Path(output + "/cases.tsv").write_text(str("\n".join(receipts)) + "\n")
-    print("PASS 20 native observed relation cases; supplied execution scope only")
+    print("PASS 26 native observed relation cases; supplied execution scope only")
 
 arguments ∈ list[str] ← sys.argv
 if arguments[1] == "selftest":

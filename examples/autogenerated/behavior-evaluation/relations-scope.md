@@ -13,3 +13,43 @@ For example, a 2×3 array has rank two and six stored coordinates. Under a decla
 Call relations compare an independently specified required sequence to recorded calls, count and effect delta. Repeated-call relations require two recorded calls and immutable snapshots. Canonical integer state serialization is supported; universal serialization correctness, unknown encodings and source-wide purity are not claimed.
 
 Implementation extends the established checked-Ithon observation adapter. Native observer fixtures remain execution witnesses, not definitions of the relation. Positive twins, deliberate errors and boundary/unsupported inputs must disagree with a broken checker.
+
+## Exact oriented affine hyperplane contracts
+
+The following three relations are supported for **declared finite observations**,
+not inferred meanings of names. Point and normal have matching integer
+coordinates (dimension 1–8); the normal must be nonzero. The offset is an
+integer. Side is encoded as −1 (negative), 0 (on the plane), or +1 (positive),
+with the positive side defined by normal·point + offset > 0.
+
+- `hyperplane/affine-side`: input `point`, `normal`, `offset` and observed
+  `side`. The exact sign must match the reported side.
+- `hyperplane/scale-and-side`: add nonzero integer `scale`,
+  `scaled.normal`, `scaled.offset`, `side.before`, and `side.after`.
+  The coefficients must be scaled by precisely the declared factor. A positive
+  factor preserves the oriented side; a negative factor reverses nonzero signs,
+  without changing the zero set.
+- `hyperplane/orthogonal-frame`: add a square rational orthogonal matrix,
+  encoded as semicolon-separated `basis.numerators` and positive
+  `basis.denominator`. The two observed transformed numerator vectors,
+  `point.after.numerators` and `normal.after.numerators`, share the same
+  denominator. Both point and normal must be transformed consistently;
+  the offset does not change. Recorded `side.before` and `side.after`
+  must agree. Dimensions 1–6, including orientation-reversing orthogonal
+  transformations, are supported.
+
+All checks use integer arithmetic; none tests approximate angles. Malformed
+dimensions, missing observations, a zero normal, or zero scaling are UNKNOWN.
+A fully specified, nonorthogonal matrix or false reported side is a
+contradiction. Exact checks concern only the recorded point, not an entire
+program.
+
+The Ithon positive/negative controls are **static checker tests**. The C
+observer additionally supplies three native positive/mutated case pairs. The
+existing Kitchen/Flexible Pipes path records those executions at O0 and O2;
+a separately pinned AI-CI verifier recompiles the C source, recaptures the
+output and recomputes the three judgments using rational arithmetic. On a
+successful exact-head run that is 26 case pairs, 52 independently recaptured
+executions, 26 deliberate counterexamples and 52 forged-status rejections.
+These fixtures do not establish behavior of separate geometry-owner programs,
+unseen points or physical devices. Source presence alone is not acceptance.
